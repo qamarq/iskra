@@ -78,7 +78,7 @@ async function Candidates() {
     return <EmptyState title="Brak kandydatów">Radar nie ma niepewnych trafień do sprawdzenia.</EmptyState>
   }
   return (
-    <ul data-guide="queue" className="space-y-4 rounded-2xl">
+    <ul className="space-y-4 rounded-2xl">
       {candidates.map((c) => (
         <li key={c.id} className="rounded-2xl border border-border bg-card p-5">
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

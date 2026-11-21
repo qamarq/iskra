@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ViewTransition } from "react"
 import { AREA_LABEL, RECOMMENDATION_SHORT, STAGE_LABEL, credibilityLabel } from "@/lib/labels"
 import type { InnovationListItem } from "@/server/queries"
 import { CompareToggle } from "./compare"
@@ -7,8 +8,8 @@ import { ScoreRing } from "./score-ring"
 
 const PEEK = ["ember", "mint", "lilac", "glow", "sky", "pink"] as const
 
-export function InnovationListItemCard({ item, index = 0 }: { item: InnovationListItem; index?: number }) {
-  return (
+export function InnovationListItemCard({ item, index = 0, morph }: { item: InnovationListItem; index?: number; morph?: boolean }) {
+  const card = (
     <Link
       href={"/innowacje/" + item.slug}
       style={{ animationDelay: Math.min(index, 10) * 60 + "ms" }}
@@ -40,6 +41,13 @@ export function InnovationListItemCard({ item, index = 0 }: { item: InnovationLi
         </div>
       </div>
     </Link>
+  )
+  return morph ? (
+    <ViewTransition name={"inno-" + item.id} share="morph" default="none">
+      {card}
+    </ViewTransition>
+  ) : (
+    card
   )
 }
 

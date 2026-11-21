@@ -34,17 +34,7 @@ export default function Home() {
             ISKRA odnajduje istniejące innowacje technologiczne, edukacyjne i administracyjne w polskich uczelniach, szkołach i samorządach, sprawdza ich
             rzeczywisty poziom rozwoju i pokazuje, gdzie mogą się przydać.
           </p>
-          <div data-guide="search" className="rounded-2xl">
-            <SearchBox large />
-          </div>
-          <div data-guide="examples" className="flex flex-wrap items-center gap-2 rounded-2xl text-sm">
-            <span className="text-muted-foreground">Na przykład:</span>
-            {EXAMPLES.map((e) => (
-              <Link key={e} href={"/innowacje?q=" + encodeURIComponent(e)} className="rounded-full border border-border bg-card px-3 py-1 hover:border-primary/50">
-                {e}
-              </Link>
-            ))}
-          </div>
+          <SearchBox large examples={EXAMPLES} />
         </div>
         <div className="relative hidden aspect-square md:block">
           <div className="absolute inset-8 rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_65%)] opacity-40" />
@@ -63,7 +53,7 @@ export default function Home() {
 
       <section className="mx-auto w-full max-w-6xl px-5 pb-12">
         <div className="grid gap-6 md:grid-cols-2">
-          <div data-guide="groups" className="rounded-3xl border border-border bg-card p-6">
+          <div className="rounded-3xl border border-border bg-card p-6">
             <h2 className="font-heading text-lg font-semibold">Szukasz jako…</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {TARGET_GROUPS.map((g) => (
@@ -86,7 +76,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section data-guide="top" className="mx-auto w-full max-w-6xl rounded-3xl px-5 pb-12">
+      <section className="mx-auto w-full max-w-6xl rounded-3xl px-5 pb-12">
         <div className="mb-5 flex items-end justify-between gap-4">
           <h2 className="font-heading text-2xl font-semibold">Najwyżej ocenione</h2>
           <Link href="/innowacje" className="flex items-center gap-1 text-sm font-medium text-primary hover:underline">

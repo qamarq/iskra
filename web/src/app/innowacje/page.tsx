@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { connection } from "next/server"
-import { Suspense } from "react"
+import { ViewTransition } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
-import { RadarSearch } from "@/components/iskierka/radar-search"
 import { Iskierka } from "@/components/iskierka/iskierka"
 import { SearchBox } from "@/components/search-box"
 import { IMPLEMENTATION_LEVELS, INNOVATION_AREAS, TARGET_GROUPS, type ImplementationLevel, type InnovationArea, type TargetGroup } from "@/lib/card"
@@ -14,13 +12,15 @@ import { cn } from "@/lib/utils"
 import { searchInnovations } from "@/server/queries"
 
 export const metadata: Metadata = { title: "Szukaj innowacji · ISKRA" }
+export const instant = false
 
 type Params = { q?: string; obszar?: string; etap?: string; dla?: string; rek?: string; region?: string }
 
-export default function SearchPage({ searchParams }: PageProps<"/innowacje">) {
+export default async function SearchPage({ searchParams }: PageProps<"/innowacje">) {
+  const params = (await searchParams) as Params
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10">
-      <Suspense fallback={<RadarSearch className="py-16" />}>{searchParams.then((sp) => <Results params={sp as Params} />)}</Suspense>
+      <Results params={params} />
     </main>
   )
 }
@@ -34,7 +34,6 @@ function pick<T extends string>(list: readonly T[], v: string | undefined): T | 
 }
 
 async function Results({ params }: { params: Params }) {
-  await connection()
   const q = one(params.q)?.trim() || undefined
   const area = pick<InnovationArea>(INNOVATION_AREAS, one(params.obszar))
   const level = pick<ImplementationLevel>(IMPLEMENTATION_LEVELS, one(params.etap))
@@ -58,7 +57,7 @@ async function Results({ params }: { params: Params }) {
         <p className="text-muted-foreground">Opisz problem własnymi słowami. Radar szuka po znaczeniu, nie tylko po słowach kluczowych.</p>
       </div>
       <SearchBox defaultValue={q} hidden={{ obszar: area, etap: level, dla: group, rek: recommendation, region }} />
-      <div data-guide="filters" className="space-y-2 rounded-2xl">
+      <div className="space-y-2 rounded-2xl">
         <Row label="Dla kogo">
           <Chip href={href({ dla: undefined })} active={!group}>
             Wszyscy
@@ -112,7 +111,11 @@ async function Results({ params }: { params: Params }) {
       </div>
       {rows.length ? (
         <div className="flex items-center gap-3">
-          <Iskierka color={q ? "mint" : "ember"} pose={q ? "ok" : "idle"} size={56} />
+          <ViewTransition name="iskierka-main" share="morph" default="none">
+            <span className="inline-flex">
+              <Iskierka color="ember" pose={q ? "ok" : "idle"} size={56} />
+            </span>
+          </ViewTransition>
           <p className="rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-2 text-sm shadow-sm">
             {q ? "Znalazłam " : "Mam "}
             <b>
@@ -123,9 +126,9 @@ async function Results({ params }: { params: Params }) {
         </div>
       ) : null}
       {rows.length ? (
-        <div data-guide="results" className="grid gap-3 rounded-2xl md:grid-cols-2">
+        <div className="grid gap-3 rounded-2xl md:grid-cols-2">
           {rows.map((item, i) => (
-            <InnovationListItemCard key={item.id} item={item} index={i} />
+            <InnovationListItemCard key={item.id} item={item} index={i} morph />
           ))}
         </div>
       ) : (

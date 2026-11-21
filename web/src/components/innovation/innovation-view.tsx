@@ -2,6 +2,7 @@ import { format } from "date-fns"
 import { pl } from "date-fns/locale"
 import { ArrowUpRight, Quote } from "lucide-react"
 import Link from "next/link"
+import { ViewTransition } from "react"
 import type { FactStatus } from "@/lib/card"
 import { CRITERIA_INFO } from "@/lib/criteria"
 import {
@@ -35,6 +36,7 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
 
   return (
     <article className="space-y-8">
+      <ViewTransition name={"inno-" + data.id} share="morph" default="none">
       <header className="grid gap-6 rounded-3xl border border-border bg-card p-5 md:grid-cols-[minmax(0,1fr)_auto] md:p-8">
         <div className="min-w-0 space-y-3">
           <p className="text-sm text-muted-foreground">
@@ -57,16 +59,16 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
             <CompareToggle slug={data.slug} />
           </div>
         </div>
-        <div data-guide="gauges" className="flex flex-wrap gap-3 rounded-2xl md:flex-col md:flex-nowrap">
+        <div className="flex flex-wrap gap-3 rounded-2xl md:flex-col md:flex-nowrap">
           <Gauge label="Potencjał" score={data.potential} hint="poziom wdrożenia, TRL, innowacyjność, zastosowanie" />
           <Gauge label="Wiarygodność" score={data.credibility} hint={credibilityLabel(data.credibility)} />
         </div>
       </header>
+      </ViewTransition>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="detail-rise grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-8">
           <Section
-            guide="facts"
             title="Karta innowacji"
             description="„Potwierdzone” = cytat odnaleziony w źródle. „Szacunek” = wniosek modelu bez potwierdzenia w tekście."
           >
@@ -115,7 +117,6 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
           </Section>
 
           <Section
-            guide="score"
             title="Ocena potencjału"
             description="Poziom wdrożenia i TRL wynikają wprost z karty. Innowacyjność i potencjał zastosowania ocenia model; analityk może je poprawić."
             action={
@@ -204,7 +205,7 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
 
         <aside className="space-y-8">
           {rec ? (
-            <section data-guide="rec" className="rounded-3xl bg-secondary p-6 text-secondary-foreground">
+            <section className="rounded-3xl bg-secondary p-6 text-secondary-foreground">
               <p className="text-xs font-semibold tracking-[0.14em] text-glow uppercase">Rekomendacja</p>
               <h2 className="mt-2 font-heading text-2xl font-semibold">{RECOMMENDATION_LABEL[rec.primary]}</h2>
               <ul className="mt-3 space-y-1.5 text-sm text-white/80">
@@ -224,7 +225,7 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
             </section>
           ) : null}
 
-          <Section guide="apply" title="Gdzie można zastosować" description="Szacunek modelu i podmioty z bazy, które mogą skorzystać z rozwiązania.">
+          <Section title="Gdzie można zastosować" description="Szacunek modelu i podmioty z bazy, które mogą skorzystać z rozwiązania.">
             {card.applications.length ? (
               <ul className="space-y-2.5">
                 {card.applications.map((a) => (
@@ -328,17 +329,15 @@ function Section({
   title,
   description,
   action,
-  guide,
   children,
 }: {
   title: string
   description?: string
   action?: React.ReactNode
-  guide?: string
   children: React.ReactNode
 }) {
   return (
-    <section data-guide={guide} className="rounded-3xl border border-border bg-card p-6">
+    <section className="rounded-3xl border border-border bg-card p-6">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h2 className="font-heading text-xl font-semibold">{title}</h2>

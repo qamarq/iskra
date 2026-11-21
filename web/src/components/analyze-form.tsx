@@ -84,7 +84,7 @@ export function AnalyzeForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} data-guide="analyze" className="space-y-5 rounded-3xl border border-border bg-card p-6 md:p-8">
+    <form onSubmit={onSubmit} className="space-y-5 rounded-3xl border border-border bg-card p-6 md:p-8">
       <label className="block space-y-2">
         <span className="text-sm font-medium">Adres strony opisującej rozwiązanie</span>
         <input
