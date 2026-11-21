@@ -92,10 +92,10 @@ async function seedSources(sources: SeedSource[]) {
 }
 
 async function seedInnovations(items: SeedInnovation[]) {
-  const [importSource] = await db()
-    .insert(source)
-    .values({ kind: "import", name: "Import danych startowych" })
-    .returning({ id: source.id })
+  const [existingImport] = await db().select({ id: source.id }).from(source).where(eq(source.kind, "import"))
+  const [importSource] = existingImport
+    ? [existingImport]
+    : await db().insert(source).values({ kind: "import", name: "Import danych startowych" }).returning({ id: source.id })
 
   const created: number[] = []
   for (const item of items) {
