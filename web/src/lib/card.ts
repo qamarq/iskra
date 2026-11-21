@@ -26,7 +26,7 @@ export const innovationCardSchema = z.object({
   maturity: quoted(
     z.object({
       stage: z.enum(MATURITY_STAGES),
-      trl: z.number().int().min(1).max(9).nullable(),
+      trl: z.number().int().nullable().describe("Poziom gotowości technologii 1–9, tylko dla innowacji technologicznych"),
     }),
   ),
   results: quoted(z.string().nullable()),
