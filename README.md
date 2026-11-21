@@ -47,7 +47,7 @@ Pełna metodologia: `/kryteria` w aplikacji, szczegóły techniczne: [docs/archi
 ### Wymagania
 - Node.js 22+ i pnpm 11
 - Docker (PostgreSQL 17 z pgvector)
-- Klucz do API zgodnego z OpenAI (OpenAI, OpenRouter albo lokalny vLLM/Ollama)
+- Klucz Anthropic (Claude) do kart, ocen i wykrywania oraz klucz OpenAI do embeddingów; alternatywnie dowolne API zgodne z OpenAI (OpenRouter, lokalny vLLM/Ollama)
 
 ### Lokalnie
 ```bash
@@ -66,11 +66,12 @@ pnpm dev                                   # http://localhost:3000
 | Zmienna | Opis |
 |---|---|
 | `DATABASE_URL` | PostgreSQL z rozszerzeniem pgvector |
-| `OPENAI_API_KEY` | Klucz API |
-| `OPENAI_BASE_URL` | Adres API zgodnego z OpenAI, np. `https://openrouter.ai/api/v1` albo lokalny serwer; puste = OpenAI |
-| `OPENAI_MODEL` | Model do kart, ocen i dopasowań |
-| `OPENAI_DETECT_MODEL` | Tańszy model do wykrywania na dużej liczbie stron |
-| `OPENAI_EMBEDDING_MODEL` | Model embeddingów (1536 wymiarów) |
+| `LLM_PROVIDER` | `anthropic` (domyślnie, gdy jest `ANTHROPIC_API_KEY`) albo `openai` |
+| `ANTHROPIC_API_KEY` | Klucz Claude API |
+| `ANTHROPIC_MODEL`, `ANTHROPIC_DETECT_MODEL` | Modele do kart i ocen oraz do wykrywania (domyślnie `claude-sonnet-5-5`) |
+| `OPENAI_API_KEY` | Embeddingi (wyszukiwanie po znaczeniu, duplikaty, odbiorcy); bez klucza radar działa w trybie tekstowym |
+| `OPENAI_EMBEDDING_MODEL` | Model embeddingów (1536 wymiarów, domyślnie `text-embedding-3-small`) |
+| `OPENAI_BASE_URL`, `OPENAI_MODEL`, `OPENAI_DETECT_MODEL` | Przy `LLM_PROVIDER=openai`: dowolne API zgodne z OpenAI (OpenRouter, vLLM, Ollama) |
 | `CRON_SECRET` | Sekret dla `POST /api/cron/radar` (cykliczne uruchamianie radaru) |
 
 ### Radar z linii poleceń
@@ -106,7 +107,7 @@ przeglądarka ──► Next.js 16 (App Router, React 19)
 ## 5. Dane, założenia i bezpieczeństwo
 
 - **Źródła:** publiczne strony uczelni, samorządów i szkół; OpenAlex (publikacje, otwarte API); dane startowe z publicznych stron (każda pozycja z adresem). Zapisujemy wyciągnięty tekst, adres i datę pobrania, bez surowego HTML.
-- **AI:** model czyta teksty i proponuje oceny innowacyjności i potencjału. Fakty muszą mieć cytat odnaleziony w źródle przez program; wiarygodność i rekomendację liczą jawne reguły.
+- **AI:** Claude Sonnet 5.5 (structured outputs, z automatycznym modelem zapasowym przy odmowie) czyta teksty i proponuje oceny innowacyjności i potencjału; embeddingi OpenAI `text-embedding-3-small`. Fakty muszą mieć cytat odnaleziony w źródle przez program; wiarygodność i rekomendację liczą jawne reguły.
 - **Dane osobowe:** zapisujemy tylko to, co instytucja opublikowała, i rolę twórców. Analityka użytkowników jest anonimowa: treść zapytań, filtry, liczba wyników i odsłony kart, bez identyfikatorów, adresów IP ani ciasteczek.
 - **Model lokalny:** dzięki `OPENAI_BASE_URL` całość może działać na modelu w infrastrukturze instytucji.
 - **Skalowanie:** nowe źródło to wpis z adresem listy aktualności i wzorcem adresu artykułu; nowy typ źródła to adapter w `server/sources`.
