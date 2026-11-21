@@ -4,7 +4,7 @@ import { connection } from "next/server"
 import { Suspense } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
-import { IskierkiSearching } from "@/components/iskierka/searching"
+import { RadarSearch } from "@/components/iskierka/radar-search"
 import { Iskierka } from "@/components/iskierka/iskierka"
 import { SearchBox } from "@/components/search-box"
 import { IMPLEMENTATION_LEVELS, INNOVATION_AREAS, TARGET_GROUPS, type ImplementationLevel, type InnovationArea, type TargetGroup } from "@/lib/card"
@@ -20,7 +20,7 @@ type Params = { q?: string; obszar?: string; etap?: string; dla?: string; rek?: 
 export default function SearchPage({ searchParams }: PageProps<"/innowacje">) {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10">
-      <Suspense fallback={<IskierkiSearching />}>{searchParams.then((sp) => <Results params={sp as Params} />)}</Suspense>
+      <Suspense fallback={<RadarSearch className="py-16" />}>{searchParams.then((sp) => <Results params={sp as Params} />)}</Suspense>
     </main>
   )
 }
