@@ -111,6 +111,27 @@ export async function listCandidates() {
     .orderBy(sql`(${document.detection}->>'score')::float desc`, desc(document.fetchedAt))
 }
 
+export async function listPendingDocuments(limit = 100) {
+  const [rows, [total]] = await Promise.all([
+    db()
+      .select({
+        id: document.id,
+        title: document.title,
+        url: document.url,
+        fetchedAt: document.fetchedAt,
+        sourceName: source.name,
+        length: sql<number>`length(${document.text})`,
+      })
+      .from(document)
+      .leftJoin(source, eq(document.sourceId, source.id))
+      .where(eq(document.status, "nowy"))
+      .orderBy(source.name, desc(document.fetchedAt))
+      .limit(limit),
+    db().select({ n: count() }).from(document).where(eq(document.status, "nowy")),
+  ])
+  return { rows, total: total?.n ?? 0 }
+}
+
 export async function listPartners() {
   const rows = await db()
     .select({

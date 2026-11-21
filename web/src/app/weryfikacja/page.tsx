@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/empty-state"
 import { ListSkeleton } from "@/components/list-skeleton"
 import { PageHeader } from "@/components/page-header"
 import { SOURCE_LABEL, percent } from "@/lib/labels"
-import { listCandidates } from "@/server/queries"
+import { listCandidates, listPendingDocuments } from "@/server/queries"
 
 export const metadata: Metadata = { title: "Do weryfikacji · ISKRA" }
 
@@ -21,7 +21,48 @@ export default function ReviewPage() {
       <Suspense fallback={<ListSkeleton />}>
         <Candidates />
       </Suspense>
+      <Suspense fallback={null}>
+        <PendingDocuments />
+      </Suspense>
     </main>
+  )
+}
+
+async function PendingDocuments() {
+  await connection()
+  const { rows, total } = await listPendingDocuments()
+  if (!total) return null
+  const bySource = Map.groupBy(rows, (r) => r.sourceName ?? "Bez źródła")
+  return (
+    <section className="mt-12">
+      <h2 className="font-heading text-xl font-semibold">Pobrane, czekają na wykrywanie ({total})</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Crawler pobrał te strony, ale model jeszcze nie sprawdził, czy opisują innowacje. Po podłączeniu modelu: <code>pnpm crawl --screen-pending</code>.
+      </p>
+      <div className="mt-5 space-y-6">
+        {[...bySource.entries()].map(([name, docs]) => (
+          <div key={name}>
+            <p className="text-sm font-medium">
+              {name} <span className="text-muted-foreground">· {docs.length}</span>
+            </p>
+            <ul className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card">
+              {docs.map((d) => (
+                <li key={d.id} className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm">
+                  {d.url ? (
+                    <a href={d.url} target="_blank" rel="noreferrer" className="min-w-0 truncate hover:text-primary">
+                      {d.title ?? d.url}
+                    </a>
+                  ) : (
+                    <span className="min-w-0 truncate">{d.title ?? "Bez tytułu"}</span>
+                  )}
+                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{Math.round(d.length / 1000)} tys. znaków</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }
 
