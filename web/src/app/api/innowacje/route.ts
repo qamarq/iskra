@@ -17,7 +17,8 @@ export async function GET(request: Request) {
     { limit: Math.min(200, Number(params.get("limit") ?? 100)) },
   )
   const cards = await getInnovationsBySlugs(rows.map((r) => r.slug))
-  const origin = new URL(request.url).origin
+  const forwardedHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host")
+  const origin = forwardedHost ? (request.headers.get("x-forwarded-proto") ?? "https") + "://" + forwardedHost : new URL(request.url).origin
   return Response.json({
     mode,
     count: cards.length,
