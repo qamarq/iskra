@@ -85,6 +85,12 @@ pnpm crawl --recheck --days=7              # odświeżenie znanych innowacji, kt
 ### Cykliczna aktualizacja
 `POST /api/cron/radar` z nagłówkiem `Authorization: Bearer $CRON_SECRET` uruchamia w tle: crawl wszystkich źródeł, wykrywanie na zaległych stronach i ponowne sprawdzenie innowacji starszych niż 7 dni. W Coolify wystarczy zadanie harmonogramu z `curl` raz dziennie.
 
+### Wdrożenie w Coolify
+1. Baza: zasób „Docker Image” `pgvector/pgvector:pg17` z wolumenem na `/var/lib/postgresql/data` i zmiennymi `POSTGRES_DB/USER/PASSWORD` (albo PostgreSQL z własnym obrazem).
+2. Aplikacja: z repozytorium GitHub, katalog bazowy `/web`, build pack Dockerfile, port 3000, zmienne z tabeli wyżej (`DATABASE_URL` wskazuje na bazę w sieci Coolify).
+3. Po pierwszym wdrożeniu: `pnpm db:migrate` i `pnpm db:seed` (lokalnie z `DATABASE_URL` produkcji albo w terminalu kontenera).
+4. Zadanie harmonogramu raz dziennie: `curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://<domena>/api/cron/radar`.
+
 ### Produkcyjnie
 ```bash
 docker build -t iskra-web ./web
