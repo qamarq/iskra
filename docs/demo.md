@@ -1,35 +1,36 @@
 # Scenariusz demo (film ≤ 3 min)
 
-Scenariusz z treści zadania: a) wprowadzenie lub wykrycie, b) uporządkowanie informacji, c) ocena według kryteriów, d) odbiorcy i ścieżka, e) uzasadnienie i mierniki. Dwa przypadki użycia, oba prawdziwe. `pnpm db:seed` pomija je celowo, żeby zgłosić je na żywo.
+Scenariusz z treści zadania: a) wykrycie, b) uporządkowanie informacji, c) ocena według kryteriów, d) odbiorcy i zastosowanie, e) uzasadnienie i mierniki. Dwa przypadki użycia, oba prawdziwe. `pnpm db:seed` pomija je celowo (`"demo": true` w `web/seed/seed.json`).
 
-## Przypadek 1: technologia z uczelni (zgłoszenie z linku)
+## 0. Problem (15 s)
+Ktoś w gminie szuka sposobu na problem, który ktoś inny już rozwiązał, ale informacja leży w aktualnościach uczelni albo urzędu. Radar ma skrócić drogę do gotowego rozwiązania.
 
-**Antybakteryjna nanokompozytowa powłoka TiO₂:Ag,N na szkło ekranów dotykowych – kolejny patent UR i PCI**
-Uniwersytet Rzeszowski (wspólnie z Podkarpackim Centrum Innowacji)
-Źródło: https://www.ur.edu.pl/en/university/news/another-patent-for-an-innovative-antibacterial-coating-awarded-to-the-university-of-rzeszow-and-the-podkarpackie-innovation-centre
+## 1. Wyszukiwanie po potrzebie (30 s)
+Strona główna → „Szukasz jako: Instytucje publiczne i samorządy” albo wpisanie potrzeby własnymi słowami (np. „jak skrócić kolejki w urzędzie”). Wyniki z dopasowaniem, filtry obszar/etap/rekomendacja, dodanie dwóch wyników do porównania i ekran `/porownaj`.
 
-1. `/zglos` → „Link do strony” → wklej adres źródła → „Analizuj i oceń”.
-2. Karta: problem, rozwiązanie, TRL, efekty (redukcja S. aureus > 90%) z cytatami; lista braków.
-3. Ocena: wysoka nowość (patent), dojrzałość prototypu; korekta jednego kryterium przez opiekuna i przeliczenie wyniku.
-4. Ścieżka: komercjalizacja (licencja, partner przemysłowy) i dopasowani partnerzy: firmy, CTT, inwestorzy.
-5. Szkic wiadomości do partnera → „Wysłano” → status „W kontakcie” w historii.
+## 2. Przypadek 1: technologia z uczelni (60 s)
 
-## Przypadek 2: innowacja organizacyjna z samorządu (zgłoszenie z opisu)
+**Antybakteryjna powłoka TiO₂:Ag,N na szkło ekranów dotykowych** (Uniwersytet Rzeszowski i PCI, patent 2026).
 
-**Rzeszowski Panel Klimatyczny – 51 wiążących rekomendacji mieszkańców i monitoring ich realizacji**
-Gmina Miasto Rzeszów (Urząd Miasta Rzeszowa)
-Źródło: https://panel-obywatelski.erzeszow.pl/pl/13-aktualnosci/29-aktualnosci/74-raport-z-panelu.html
+1. `/analizuj` → wklejenie adresu źródła z `seed.json` → kroki analizy.
+2. Karta: technologiczna, produkt, TRL, patent; przy każdym fakcie „potwierdzone” z cytatem; to, czego źródło nie mówi, oznaczone jako szacunek albo brak danych.
+3. Ocena: potencjał z czterech kryteriów, wiarygodność wyliczona z cytatów, rodzaju źródła i dowodów (patent).
+4. Rekomendacja: do licencjonowania (polskie IP); gdzie zastosować: producenci ekranów, szpitale, transport publiczny; przykładowi odbiorcy z bazy.
+5. Publikacje z OpenAlex jako kontekst innowacyjności.
 
-1. `/zglos` → „Opis” → wklej tekst z `web/seed/seed.json` (pozycja z `"demo": true`).
-2. Karta: typ organizacyjny/społeczny, mierzalne efekty (51 rekomendacji, stan realizacji).
-3. Ścieżka: transfer do innych samorządów; partnerzy: gminy i programy finansowania.
-4. Podobne rozwiązania: inne inicjatywy klimatyczne i energetyczne samorządów z bazy.
+## 3. Przypadek 2: innowacja administracyjna z samorządu (40 s)
 
-## Wykrywanie automatyczne i dublowanie prac
+**Rzeszowski Panel Klimatyczny** (Gmina Miasto Rzeszów).
 
-- `/weryfikacja`: kandydaci z crawlera (`pnpm crawl`) ze stron aktualności uczelni i gmin, zatwierdzenie jednym kliknięciem.
+1. `/analizuj` z linkiem do źródła.
+2. Karta: administracyjna, organizacja, stosowane w praktyce, efekty (51 rekomendacji, stan realizacji).
+3. Rekomendacja: gotowe do zastosowania w innych samorządach; podobne rozwiązania z bazy.
+
+## 4. Automatyczne wykrywanie i aktualizacja (20 s)
+
+- `/weryfikacja`: radar przeczytał strony aktualności uczelni i miast (np. Wrocław), pewne trafienia dodał sam, niepewne czekają na decyzję.
 - Pary podobnych rozwiązań w danych startowych: akustyczne wykrywanie dronów (Politechnika Rzeszowska ↔ Politechnika Łódzka), „Mobilny Urzędnik” (Rzeszów ↔ Działoszyce), bramka SMS dla mieszkańców (Tyczyn ↔ Kobiór).
 
-## Mierniki
+## 5. Mierniki (15 s)
 
-`/mierniki`: lejek od wykrycia do wdrożenia, czas do rekomendacji, wykryte duplikaty, kontakty z partnerami.
+`/mierniki`: zawartość bazy według obszaru, etapu i TRL, praca crawlera, źródła z datą ostatniego przejścia, najczęstsze wyszukiwania (zapytania bez wyników pokazują luki).
