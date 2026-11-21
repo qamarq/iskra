@@ -1,0 +1,20 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: iskra-db
+    environment:
+      POSTGRES_DB: iskra
+      POSTGRES_USER: iskra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iskra}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_buffers=256MB"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iskra -d iskra"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  pgdata:
