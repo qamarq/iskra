@@ -4,7 +4,7 @@ import { connection } from "next/server"
 import { Suspense } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
-import { ListSkeleton } from "@/components/list-skeleton"
+import { IskierkiSearching } from "@/components/iskierka/searching"
 import { SearchBox } from "@/components/search-box"
 import { HeroMascot } from "@/components/iskierka/hero-mascot"
 import { INNOVATION_AREAS, TARGET_GROUPS } from "@/lib/card"
@@ -93,7 +93,7 @@ export default function Home() {
             Wszystkie <ArrowRight className="size-4" />
           </Link>
         </div>
-        <Suspense fallback={<ListSkeleton rows={4} />}>
+        <Suspense fallback={<IskierkiSearching label="Iskierki wybierają najlepsze…" />}>
           <Top />
         </Suspense>
       </section>
@@ -125,8 +125,8 @@ async function Top() {
   }
   return (
     <div className="grid gap-3 md:grid-cols-2">
-      {rows.map((item) => (
-        <InnovationListItemCard key={item.id} item={item} />
+      {rows.map((item, i) => (
+        <InnovationListItemCard key={item.id} item={item} index={i} />
       ))}
     </div>
   )

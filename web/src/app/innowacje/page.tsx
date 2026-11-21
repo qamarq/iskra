@@ -4,7 +4,7 @@ import { connection } from "next/server"
 import { Suspense } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
-import { ListSkeleton } from "@/components/list-skeleton"
+import { IskierkiSearching } from "@/components/iskierka/searching"
 import { Iskierka } from "@/components/iskierka/iskierka"
 import { SearchBox } from "@/components/search-box"
 import { IMPLEMENTATION_LEVELS, INNOVATION_AREAS, TARGET_GROUPS, type ImplementationLevel, type InnovationArea, type TargetGroup } from "@/lib/card"
@@ -20,7 +20,7 @@ type Params = { q?: string; obszar?: string; etap?: string; dla?: string; rek?: 
 export default function SearchPage({ searchParams }: PageProps<"/innowacje">) {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10">
-      <Suspense fallback={<ListSkeleton rows={6} />}>{searchParams.then((sp) => <Results params={sp as Params} />)}</Suspense>
+      <Suspense fallback={<IskierkiSearching />}>{searchParams.then((sp) => <Results params={sp as Params} />)}</Suspense>
     </main>
   )
 }
@@ -124,8 +124,8 @@ async function Results({ params }: { params: Params }) {
       ) : null}
       {rows.length ? (
         <div data-guide="results" className="grid gap-3 rounded-2xl md:grid-cols-2">
-          {rows.map((item) => (
-            <InnovationListItemCard key={item.id} item={item} />
+          {rows.map((item, i) => (
+            <InnovationListItemCard key={item.id} item={item} index={i} />
           ))}
         </div>
       ) : (

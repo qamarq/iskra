@@ -2,7 +2,33 @@
 
 import Link from "next/link"
 import { useSyncExternalStore } from "react"
+import { createRoot } from "react-dom/client"
 import { cn } from "@/lib/utils"
+import { Iskierka } from "./iskierka/iskierka"
+
+function flyToBar(from: DOMRect) {
+  const host = document.createElement("div")
+  host.className = "pointer-events-none fixed z-[60]"
+  host.style.left = from.left + from.width / 2 - 28 + "px"
+  host.style.top = from.top - 30 + "px"
+  document.body.appendChild(host)
+  const root = createRoot(host)
+  root.render(<Iskierka color="mint" pose="cheer" size={56} />)
+  const dx = window.innerWidth / 2 - (from.left + from.width / 2)
+  const dy = window.innerHeight - 60 - from.top
+  const anim = host.animate(
+    [
+      { transform: "translate(0, 0) scale(1) rotate(0deg)", opacity: 1 },
+      { transform: `translate(${dx * 0.45}px, ${dy * 0.2 - 120}px) scale(1.15) rotate(-12deg)`, opacity: 1, offset: 0.45 },
+      { transform: `translate(${dx}px, ${dy}px) scale(.5) rotate(10deg)`, opacity: 0.2 },
+    ],
+    { duration: 900, easing: "cubic-bezier(.4,.0,.2,1)" },
+  )
+  anim.onfinish = () => {
+    root.unmount()
+    host.remove()
+  }
+}
 
 const KEY = "iskra-compare"
 const MAX = 4
@@ -47,6 +73,7 @@ export function CompareToggle({ slug, className }: { slug: string; className?: s
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
+        if (!active && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) flyToBar(e.currentTarget.getBoundingClientRect())
         toggle(slug)
       }}
       className={cn(
@@ -65,10 +92,12 @@ export function CompareBar() {
   if (slugs.length === 0) return null
   return (
     <div className="no-print fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-      <div className="flex items-center gap-3 rounded-2xl bg-secondary px-4 py-3 text-sm text-secondary-foreground shadow-xl">
-        <span>
-          Do porównania: <b>{slugs.length}</b>
+      <div className="flex items-center gap-3 rounded-2xl bg-secondary py-2 pr-4 pl-2 text-sm text-secondary-foreground shadow-xl">
+        <span key={slugs.length} className="bar-bounce relative -mt-8 inline-flex">
+          <Iskierka color="mint" pose="ok" size={54} />
+          <span className="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow">{slugs.length}</span>
         </span>
+        <span>{slugs.length === 1 ? "Dodaj jeszcze jedno rozwiązanie" : "Rozwiązań do porównania: " + slugs.length}</span>
         <Link href={"/porownaj?k=" + slugs.join(",")} className="rounded-lg bg-primary px-3 py-1.5 font-medium text-primary-foreground">
           Porównaj
         </Link>

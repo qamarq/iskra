@@ -55,14 +55,16 @@ export function AnalyzeForm() {
   if (pending) {
     return (
       <div className="rounded-3xl border border-border bg-card p-8">
-        <div className="flex items-center gap-5">
-          <Iskierka color="mint" pose={step >= STEPS.length - 1 ? "think" : "lupa"} size={96} />
-          <div>
-            <p className="font-heading text-xl font-semibold">Iskierka czyta źródło…</p>
-            <p className="mt-1 text-sm text-muted-foreground">Zwykle 20–40 sekund. {STEPS[step]}.</p>
-          </div>
-        </div>
-        <ol className="mt-6 space-y-3">
+        <p className="font-heading text-xl font-semibold">Iskierka czyta źródło…</p>
+        <p className="mt-1 text-sm text-muted-foreground">Zwykle 20–40 sekund.</p>
+        <ol className="relative mt-6 space-y-3 pl-20">
+          <span
+            className="absolute left-0 transition-[top] duration-700 ease-[cubic-bezier(.3,1.4,.5,1)]"
+            style={{ top: step * 36 - 22 + "px" }}
+            aria-hidden="true"
+          >
+            <Iskierka color="mint" pose={step >= STEPS.length - 1 ? "think" : "lupa"} size={64} />
+          </span>
           {STEPS.map((label, i) => (
             <li key={label} className="flex items-center gap-3 text-sm">
               <span

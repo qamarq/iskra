@@ -2,14 +2,23 @@ import Link from "next/link"
 import { AREA_LABEL, RECOMMENDATION_SHORT, STAGE_LABEL, credibilityLabel } from "@/lib/labels"
 import type { InnovationListItem } from "@/server/queries"
 import { CompareToggle } from "./compare"
+import { Iskierka } from "./iskierka/iskierka"
 import { ScoreRing } from "./score-ring"
 
-export function InnovationListItemCard({ item }: { item: InnovationListItem }) {
+const PEEK = ["ember", "mint", "lilac", "glow", "sky", "pink"] as const
+
+export function InnovationListItemCard({ item, index = 0 }: { item: InnovationListItem; index?: number }) {
   return (
     <Link
       href={"/innowacje/" + item.slug}
-      className="group flex gap-4 rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_18px_40px_-24px_rgba(228,87,46,0.45)]"
+      style={{ animationDelay: Math.min(index, 10) * 60 + "ms" }}
+      className="card-drop group relative mt-6 flex gap-4 rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_18px_40px_-24px_rgba(228,87,46,0.45)]"
     >
+      <span className="pointer-events-none absolute -top-[42px] right-8 h-[42px] w-[64px] overflow-hidden" aria-hidden="true">
+        <span className="block translate-y-[46px] transition-transform duration-300 ease-[cubic-bezier(.3,1.6,.5,1)] group-hover:translate-y-[2px]">
+          <Iskierka color={PEEK[item.id % PEEK.length]} pose="wave" size={58} />
+        </span>
+      </span>
       <div className="flex flex-col items-center gap-1">
         <ScoreRing score={item.potential} size={56} />
         <span className="text-[11px] text-muted-foreground">potencjał</span>
