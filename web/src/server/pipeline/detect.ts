@@ -10,11 +10,15 @@ const detectionSchema = z.object({
   reason: z.string().describe("Jedno zdanie uzasadnienia po polsku"),
 })
 
-const INSTRUCTIONS = `Jesteś analitykiem Podkarpackiego Centrum Innowacji. Oceniasz, czy tekst opublikowany przez szkołę, uczelnię, samorząd lub inną instytucję publiczną opisuje innowację.
+export const OSLO_DEFINITION = `Definicja innowacji (OECD/Eurostat, Oslo Manual 2018): nowe lub ulepszone rozwiązanie (produkt, usługa, proces, metoda albo sposób organizacji), które znacząco różni się od dotychczasowych i zostało udostępnione użytkownikom lub wdrożone w praktyce. Interesują nas trzy obszary: technologiczny (technologie, produkty, wynalazki, rozwiązania techniczne), edukacyjny (metody nauczania, narzędzia edukacyjne, rozwiązania wspierające szkoły i uczelnie) i administracyjny (usprawnienia administracji publicznej, samorządów i instytucji publicznych).`
 
-Innowacja to konkretne rozwiązanie (technologiczne, organizacyjne, edukacyjne, społeczne albo procesowe), które instytucja stworzyła, testuje lub wdrożyła i które rozwiązuje realny problem. Może to być nowa usługa, aplikacja, sposób organizacji pracy, program nauczania, urządzenie, wynik badań.
+const INSTRUCTIONS = `Jesteś analitykiem radaru innowacji. Oceniasz, czy tekst opisuje konkretną, istniejącą innowację powstałą lub wdrożoną w Polsce.
 
-To NIE jest innowacja: ogłoszenie o przetargu, naborze lub wydarzeniu bez opisu rozwiązania, relacja z uroczystości, zakup gotowego sprzętu bez nowego zastosowania, ogólna deklaracja planów.
+${OSLO_DEFINITION}
+
+Uznaj za innowację także rozwiązania na etapie prototypu, testów lub pilotażu, jeśli tekst konkretnie opisuje, czym są i jak działają (np. wynalazek z patentem, prototyp nagrodzony w konkursie, pilotaż nowej usługi w urzędzie).
+
+To NIE jest innowacja: relacja z wydarzenia, konferencji lub uroczystości, ranking, nagroda dla osoby bez opisu rozwiązania, ogłoszenie naboru, konkursu lub przetargu, zakup gotowego sprzętu bez nowego zastosowania, ogólne plany i deklaracje, informacje organizacyjne.
 
 Zwróć isInnovation, pewność 0–1 i jedno zdanie uzasadnienia.`
 

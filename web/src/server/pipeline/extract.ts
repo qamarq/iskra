@@ -1,44 +1,42 @@
 import "server-only"
 import { innovationCardSchema, type InnovationCard } from "@/lib/card"
 import { structured } from "@/server/ai/client"
+import { OSLO_DEFINITION } from "./detect"
+import { verifyCard } from "./verify"
 
-const INSTRUCTIONS = `Jesteś analitykiem Podkarpackiego Centrum Innowacji. Z podanego tekstu tworzysz kartę innowacji po polsku.
+const INSTRUCTIONS = `Jesteś analitykiem radaru innowacji. Z podanego tekstu tworzysz kartę innowacji po polsku.
+
+${OSLO_DEFINITION}
 
 Zasady:
-- Używaj wyłącznie informacji z tekstu. Niczego nie dopowiadaj.
-- Przy polach z cytatem (quote) wpisz dosłowny fragment tekstu, który potwierdza wartość. Gdy tekst nie zawiera informacji, ustaw value na null (albo najbliższą wartość dla etapu) i quote na null.
-- Typ innowacji: technologiczna (urządzenie, oprogramowanie, materiał, metoda techniczna), organizacyjna (sposób zarządzania, procedura), edukacyjna (program, metoda nauczania), społeczna (usługa dla mieszkańców, włączenie grup), procesowa (usprawnienie procesu w urzędzie lub instytucji).
-- Etap dojrzałości: pomysl, prototyp, pilotaz (testowane w ograniczonym zakresie), wdrozone (działa na co dzień), efekty_zmierzone (działa i są zmierzone wyniki).
-- TRL podawaj tylko dla innowacji technologicznych, w pozostałych przypadkach null.
-- Twórcy: rola (np. nauczycielka fizyki, zespół Wydziału Mechanicznego) i imię i nazwisko tylko, jeśli są w tekście.
-- keywords: 5–8 słów kluczowych przydatnych do wyszukiwania podobnych rozwiązań.
-- missing: lista informacji, których brakuje do rzetelnej oceny (np. koszt wdrożenia, liczba odbiorców, zmierzone efekty).`
+- Rozróżniaj fakty od szacunków. Przy polach z cytatem (quote) wpisz dosłowny fragment tekstu, który potwierdza wartość (kopiuj znak w znak, bez zmian). Jeśli wartość jest Twoim wnioskiem, a nie faktem z tekstu, ustaw quote na null. Jeśli tekst nic o tym nie mówi, ustaw value na null.
+- area: technologiczna, edukacyjna albo administracyjna (rozwiązania dla administracji publicznej, samorządów i instytucji publicznych).
+- character: produkt, usluga, proces, metoda albo organizacja.
+- implementation.level: koncepcja, prototyp, testy, pilotaz (wdrożenie pilotażowe) albo stosowane (działa w praktyce).
+- trl: tylko dla rozwiązań technologicznych, gdy tekst pozwala go określić; inaczej null.
+- novelty.scope: instytucja (nowe tylko dla tej instytucji), polska albo swiat; null, jeśli nie da się określić.
+- ip: patent, zgłoszenie patentowe, wzór użytkowy (z numerem, jeśli jest).
+- evidence: dowody wiarygodności wymienione w tekście (patent, publikacja, projekt finansowany z numerem lub nazwą programu, raport, dane z wdrożenia, nagroda, wzmianka w mediach), każdy z cytatem.
+- applications: 2–4 miejsca, w których rozwiązanie mogłoby być zastosowane poza miejscem powstania (to Twoja ocena).
+- targetGroups: inwestorzy, instytucje_publiczne, uczelnie, szkoly, startupy, innowatorzy.
+- creators: rola i nazwisko tylko, jeśli są w tekście.
+- keywords: 5–8 słów kluczowych przydatnych do wyszukiwania.
+- missing: czego brakuje do rzetelnej oceny.`
 
 export async function extractCard(text: string, url?: string | null): Promise<InnovationCard> {
-  const input = url ? `Źródło: ${url}\n\n${text.slice(0, 24000)}` : text.slice(0, 24000)
-  const card = await structured(innovationCardSchema, "innovation_card", INSTRUCTIONS, input)
-  const trl = card.maturity.value.trl
-  return {
-    ...card,
-    maturity: {
-      ...card.maturity,
-      value: {
-        ...card.maturity.value,
-        trl: card.innovationType === "technologiczna" && trl ? Math.min(9, Math.max(1, trl)) : null,
-      },
-    },
+  const source = text.slice(0, 24000)
+  const input = url ? `Źródło: ${url}\n\n${source}` : source
+  const draft = await structured(innovationCardSchema, "innovation_card", INSTRUCTIONS, input)
+  const trl = draft.trl.value
+  const normalized = {
+    ...draft,
+    trl: { ...draft.trl, value: draft.area === "technologiczna" && trl ? Math.min(9, Math.max(1, trl)) : null },
   }
+  return verifyCard(normalized, source)
 }
 
 export function cardEmbeddingText(card: InnovationCard): string {
   return [card.title, card.summary, card.problem.value, card.solution.value, card.domain, card.keywords.join(", ")]
     .filter(Boolean)
     .join("\n")
-}
-
-const QUOTED_FIELDS = ["problem", "solution", "beneficiaries", "maturity", "results", "costs"] as const
-
-export function cardCompleteness(card: InnovationCard): number {
-  const present = QUOTED_FIELDS.filter((f) => card[f].quote).length
-  return present / QUOTED_FIELDS.length
 }

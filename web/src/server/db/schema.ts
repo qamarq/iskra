@@ -1,15 +1,16 @@
 import { sql } from "drizzle-orm"
 import { index, integer, jsonb, pgTable, real, serial, text, timestamp, uniqueIndex, vector } from "drizzle-orm/pg-core"
-import type { InnovationCard, InnovationType, InstitutionType } from "@/lib/card"
+import type { ImplementationLevel, InnovationArea, InnovationCard, InnovationCharacter, InstitutionType } from "@/lib/card"
 import type {
+  Credibility,
   Criterion,
   DetectionResult,
   DocumentStatus,
+  EventKind,
   InnovationStatus,
-  MatchStatus,
   PartnerKind,
-  PathwayRecommendation,
   PriorArtSource,
+  RecommendationResult,
   SourceKind,
 } from "@/lib/domain"
 
@@ -42,12 +43,46 @@ export const source = pgTable("iskra_source", {
   createdAt: createdAt(),
 })
 
+export const innovation = pgTable(
+  "iskra_innovation",
+  {
+    id: serial("id").primaryKey(),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    summary: text("summary").notNull(),
+    area: text("area").$type<InnovationArea>().notNull(),
+    character: text("character").$type<InnovationCharacter>().notNull(),
+    level: text("level").$type<ImplementationLevel>().notNull(),
+    trl: integer("trl"),
+    region: text("region"),
+    institutionId: integer("institution_id").references(() => institution.id),
+    documentId: integer("document_id"),
+    card: jsonb("card").$type<InnovationCard>().notNull(),
+    status: text("status").$type<InnovationStatus>().notNull().default("nowa"),
+    potential: real("potential"),
+    credibility: real("credibility"),
+    credibilityDetail: jsonb("credibility_detail").$type<Credibility>(),
+    recommendation: jsonb("recommendation").$type<RecommendationResult>(),
+    duplicateOfId: integer("duplicate_of_id"),
+    embedding: vector("embedding", { dimensions: EMBEDDING_DIMENSIONS }),
+    checkedAt: timestamp("checked_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: createdAt(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("iskra_innovation_slug_idx").on(t.slug),
+    index("iskra_innovation_area_idx").on(t.area, t.level),
+    index("iskra_innovation_embedding_idx").using("hnsw", t.embedding.op("vector_cosine_ops")),
+  ],
+)
+
 export const document = pgTable(
   "iskra_document",
   {
     id: serial("id").primaryKey(),
     sourceId: integer("source_id").references(() => source.id),
     institutionId: integer("institution_id").references(() => institution.id),
+    innovationId: integer("innovation_id").references(() => innovation.id, { onDelete: "set null" }),
     url: text("url"),
     title: text("title"),
     text: text("text").notNull(),
@@ -57,33 +92,10 @@ export const document = pgTable(
     status: text("status").$type<DocumentStatus>().notNull().default("nowy"),
     detection: jsonb("detection").$type<DetectionResult>(),
   },
-  (t) => [uniqueIndex("iskra_document_hash_idx").on(t.contentHash), index("iskra_document_status_idx").on(t.status)],
-)
-
-export const innovation = pgTable(
-  "iskra_innovation",
-  {
-    id: serial("id").primaryKey(),
-    slug: text("slug").notNull(),
-    title: text("title").notNull(),
-    summary: text("summary").notNull(),
-    type: text("type").$type<InnovationType>().notNull(),
-    institutionId: integer("institution_id").references(() => institution.id),
-    documentId: integer("document_id").references(() => document.id),
-    card: jsonb("card").$type<InnovationCard>().notNull(),
-    status: text("status").$type<InnovationStatus>().notNull().default("wykryta"),
-    score: real("score"),
-    confidence: real("confidence"),
-    pathway: jsonb("pathway").$type<PathwayRecommendation>(),
-    duplicateOfId: integer("duplicate_of_id"),
-    embedding: vector("embedding", { dimensions: EMBEDDING_DIMENSIONS }),
-    createdAt: createdAt(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
   (t) => [
-    uniqueIndex("iskra_innovation_slug_idx").on(t.slug),
-    index("iskra_innovation_status_idx").on(t.status),
-    index("iskra_innovation_embedding_idx").using("hnsw", t.embedding.op("vector_cosine_ops")),
+    uniqueIndex("iskra_document_hash_idx").on(t.contentHash),
+    index("iskra_document_status_idx").on(t.status),
+    index("iskra_document_innovation_idx").on(t.innovationId),
   ],
 )
 
@@ -98,8 +110,7 @@ export const evaluation = pgTable(
     score: integer("score").notNull(),
     rationale: text("rationale").notNull(),
     evidence: text("evidence"),
-    confidence: real("confidence").notNull(),
-    author: text("author").notNull().default("ai"),
+    author: text("author").notNull().default("model"),
     createdAt: createdAt(),
   },
   (t) => [index("iskra_evaluation_innovation_idx").on(t.innovationId, t.criterion, t.createdAt)],
@@ -154,8 +165,6 @@ export const match = pgTable(
       .references(() => partner.id, { onDelete: "cascade" }),
     score: real("score").notNull(),
     reason: text("reason").notNull(),
-    message: text("message"),
-    status: text("status").$type<MatchStatus>().notNull().default("zaproponowane"),
     createdAt: createdAt(),
   },
   (t) => [uniqueIndex("iskra_match_pair_idx").on(t.innovationId, t.partnerId)],
@@ -168,11 +177,34 @@ export const event = pgTable(
     innovationId: integer("innovation_id")
       .notNull()
       .references(() => innovation.id, { onDelete: "cascade" }),
-    fromStatus: text("from_status").$type<InnovationStatus>(),
-    toStatus: text("to_status").$type<InnovationStatus>().notNull(),
+    kind: text("kind").$type<EventKind>().notNull(),
     note: text("note"),
     author: text("author").notNull().default("system"),
     at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("iskra_event_innovation_idx").on(t.innovationId, t.at)],
+)
+
+export const searchLog = pgTable(
+  "iskra_search_log",
+  {
+    id: serial("id").primaryKey(),
+    query: text("query"),
+    filters: jsonb("filters").$type<Record<string, string>>(),
+    results: integer("results").notNull(),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("iskra_search_log_at_idx").on(t.at)],
+)
+
+export const viewLog = pgTable(
+  "iskra_view_log",
+  {
+    id: serial("id").primaryKey(),
+    innovationId: integer("innovation_id")
+      .notNull()
+      .references(() => innovation.id, { onDelete: "cascade" }),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("iskra_view_log_innovation_idx").on(t.innovationId)],
 )

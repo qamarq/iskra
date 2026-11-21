@@ -1,5 +1,5 @@
 {
-  "id": "041c0ad5-4e30-4f6d-afd3-90048a933f1b",
+  "id": "a60eb778-55aa-4691-b6d7-3c9333de9bac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -22,6 +22,12 @@
         },
         "institution_id": {
           "name": "institution_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "innovation_id": {
+          "name": "innovation_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -107,6 +113,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "iskra_document_innovation_idx": {
+          "name": "iskra_document_innovation_idx",
+          "columns": [
+            {
+              "expression": "innovation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -134,6 +155,19 @@
             "id"
           ],
           "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "iskra_document_innovation_id_iskra_innovation_id_fk": {
+          "name": "iskra_document_innovation_id_iskra_innovation_id_fk",
+          "tableFrom": "iskra_document",
+          "tableTo": "iskra_innovation",
+          "columnsFrom": [
+            "innovation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -183,18 +217,12 @@
           "primaryKey": false,
           "notNull": false
         },
-        "confidence": {
-          "name": "confidence",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
         "author": {
           "name": "author",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'ai'"
+          "default": "'model'"
         },
         "created_at": {
           "name": "created_at",
@@ -270,14 +298,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "from_status": {
-          "name": "from_status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "to_status": {
-          "name": "to_status",
+        "kind": {
+          "name": "kind",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -375,11 +397,35 @@
           "primaryKey": false,
           "notNull": true
         },
-        "type": {
-          "name": "type",
+        "area": {
+          "name": "area",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "character": {
+          "name": "character",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "name": "level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trl": {
+          "name": "trl",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "region": {
+          "name": "region",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "institution_id": {
           "name": "institution_id",
@@ -404,22 +450,28 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'wykryta'"
+          "default": "'nowa'"
         },
-        "score": {
-          "name": "score",
+        "potential": {
+          "name": "potential",
           "type": "real",
           "primaryKey": false,
           "notNull": false
         },
-        "confidence": {
-          "name": "confidence",
+        "credibility": {
+          "name": "credibility",
           "type": "real",
           "primaryKey": false,
           "notNull": false
         },
-        "pathway": {
-          "name": "pathway",
+        "credibility_detail": {
+          "name": "credibility_detail",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recommendation": {
+          "name": "recommendation",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
@@ -435,6 +487,13 @@
           "type": "vector(1536)",
           "primaryKey": false,
           "notNull": false
+        },
+        "checked_at": {
+          "name": "checked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         },
         "created_at": {
           "name": "created_at",
@@ -467,11 +526,17 @@
           "method": "btree",
           "with": {}
         },
-        "iskra_innovation_status_idx": {
-          "name": "iskra_innovation_status_idx",
+        "iskra_innovation_area_idx": {
+          "name": "iskra_innovation_area_idx",
           "columns": [
             {
-              "expression": "status",
+              "expression": "area",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "level",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -506,19 +571,6 @@
           "tableTo": "iskra_institution",
           "columnsFrom": [
             "institution_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "iskra_innovation_document_id_iskra_document_id_fk": {
-          "name": "iskra_innovation_document_id_iskra_document_id_fk",
-          "tableFrom": "iskra_innovation",
-          "tableTo": "iskra_document",
-          "columnsFrom": [
-            "document_id"
           ],
           "columnsTo": [
             "id"
@@ -638,19 +690,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "message": {
-          "name": "message",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'zaproponowane'"
         },
         "created_at": {
           "name": "created_at",
@@ -901,6 +940,66 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.iskra_search_log": {
+      "name": "iskra_search_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "query": {
+          "name": "query",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "filters": {
+          "name": "filters",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "results": {
+          "name": "results",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "at": {
+          "name": "at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "iskra_search_log_at_idx": {
+          "name": "iskra_search_log_at_idx",
+          "columns": [
+            {
+              "expression": "at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.iskra_source": {
       "name": "iskra_source",
       "schema": "",
@@ -968,6 +1067,68 @@
             "id"
           ],
           "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.iskra_view_log": {
+      "name": "iskra_view_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "innovation_id": {
+          "name": "innovation_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "at": {
+          "name": "at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "iskra_view_log_innovation_idx": {
+          "name": "iskra_view_log_innovation_idx",
+          "columns": [
+            {
+              "expression": "innovation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "iskra_view_log_innovation_id_iskra_innovation_id_fk": {
+          "name": "iskra_view_log_innovation_id_iskra_innovation_id_fk",
+          "tableFrom": "iskra_view_log",
+          "tableTo": "iskra_innovation",
+          "columnsFrom": [
+            "innovation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

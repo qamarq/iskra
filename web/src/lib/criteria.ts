@@ -1,3 +1,4 @@
+import type { ImplementationLevel, InnovationCard } from "./card"
 import type { Criterion } from "./domain"
 
 export type CriterionInfo = {
@@ -5,88 +6,79 @@ export type CriterionInfo = {
   label: string
   question: string
   weight: number
+  method: "karta" | "model"
   levels: { 1: string; 3: string; 5: string }
 }
 
 export const CRITERIA_INFO: CriterionInfo[] = [
   {
-    id: "waga_problemu",
-    label: "Waga problemu",
-    question: "Jak dotkliwy i jak częsty jest problem, który rozwiązuje innowacja?",
-    weight: 0.2,
-    levels: {
-      1: "Problem niszowy albo mało dotkliwy, dotyczy pojedynczych osób.",
-      3: "Problem odczuwalny dla całej instytucji lub grupy odbiorców.",
-      5: "Problem powszechny i kosztowny, dotyczy wielu instytucji lub dużej grupy mieszkańców.",
-    },
+    id: "poziom_wdrozenia",
+    label: "Poziom wdrożenia",
+    question: "Na jakim etapie jest rozwiązanie: koncepcja, prototyp, testy, pilotaż czy stosowane w praktyce?",
+    weight: 0.25,
+    method: "karta",
+    levels: { 1: "Koncepcja.", 3: "Testy.", 5: "Rozwiązanie stosowane w praktyce." },
   },
   {
-    id: "nowosc",
-    label: "Nowość",
-    question: "Czy podobne rozwiązanie już istnieje (w bazie ISKRA, patentach, publikacjach)?",
+    id: "dojrzalosc_technologiczna",
+    label: "Dojrzałość technologiczna (TRL)",
+    question: "Jaki poziom gotowości technologii (TRL 1–9)? Dotyczy tylko rozwiązań technologicznych.",
     weight: 0.15,
+    method: "karta",
+    levels: { 1: "TRL 1–2: badania podstawowe, koncepcja.", 3: "TRL 5–6: walidacja w warunkach zbliżonych do rzeczywistych.", 5: "TRL 9: system sprawdzony w działaniu." },
+  },
+  {
+    id: "innowacyjnosc",
+    label: "Innowacyjność",
+    question: "Jak bardzo rozwiązanie różni się od istniejących (nowość dla instytucji, w Polsce, na świecie)?",
+    weight: 0.3,
+    method: "model",
     levels: {
-      1: "Rozwiązanie powszechnie znane i stosowane.",
-      3: "Znane gdzie indziej, ale nowe w tym typie instytucji lub regionie.",
-      5: "Brak znanych odpowiedników, oryginalne podejście.",
+      1: "Drobne usprawnienie znanego rozwiązania albo nowość tylko dla tej instytucji.",
+      3: "Wyraźne ulepszenie, nowe w Polsce, choć podobne istnieją za granicą.",
+      5: "Nowe podejście bez znanych odpowiedników (np. potwierdzone patentem).",
     },
   },
   {
-    id: "dojrzalosc",
-    label: "Dojrzałość",
-    question: "Na jakim etapie jest rozwiązanie (TRL dla technologii, etap wdrożenia dla pozostałych)?",
-    weight: 0.15,
+    id: "potencjal_zastosowania",
+    label: "Potencjał zastosowania",
+    question: "Czy rozwiązanie można wykorzystać w innych instytucjach, organizacjach lub branżach?",
+    weight: 0.3,
+    method: "model",
     levels: {
-      1: "Pomysł lub koncepcja (TRL 1–2).",
-      3: "Prototyp lub pilotaż w jednym miejscu (TRL 4–6).",
-      5: "Działa na co dzień, z udokumentowanym wdrożeniem (TRL 8–9).",
-    },
-  },
-  {
-    id: "efekty",
-    label: "Potwierdzone efekty",
-    question: "Czy są liczby i dowody, że rozwiązanie działa?",
-    weight: 0.15,
-    levels: {
-      1: "Brak danych o efektach, tylko deklaracje.",
-      3: "Pojedyncze liczby lub opinie użytkowników.",
-      5: "Zmierzone efekty z porównaniem przed i po.",
-    },
-  },
-  {
-    id: "przenaszalnosc",
-    label: "Przenaszalność",
-    question: "Ile innych instytucji ma ten problem i czy rozwiązanie zadziała poza miejscem powstania?",
-    weight: 0.2,
-    levels: {
-      1: "Silnie związane z lokalnymi warunkami, trudne do powtórzenia.",
-      3: "Do przeniesienia po dostosowaniu, w podobnych instytucjach.",
-      5: "Gotowe do powtórzenia w wielu instytucjach, opisane krok po kroku.",
-    },
-  },
-  {
-    id: "koszt",
-    label: "Koszt wdrożenia",
-    question: "Ile kosztuje i czego wymaga przeniesienie rozwiązania (5 = tanio i prosto)?",
-    weight: 0.15,
-    levels: {
-      1: "Wysoki koszt, specjalistyczny sprzęt lub zespół.",
-      3: "Umiarkowany koszt, w zasięgu budżetu instytucji lub grantu.",
-      5: "Niski koszt, wystarczą istniejące zasoby.",
+      1: "Silnie związane z miejscem powstania, trudne do przeniesienia.",
+      3: "Do przeniesienia do podobnych instytucji po dostosowaniu.",
+      5: "Szerokie zastosowanie w wielu instytucjach lub branżach.",
     },
   },
 ]
 
 export const CRITERIA_BY_ID = Object.fromEntries(CRITERIA_INFO.map((c) => [c.id, c])) as Record<Criterion, CriterionInfo>
 
-export function weightedScore(scores: Record<Criterion, number>): number {
-  const total = CRITERIA_INFO.reduce((sum, c) => sum + c.weight * (scores[c.id] / 5), 0)
+export const LEVEL_SCORE: Record<ImplementationLevel, number> = { koncepcja: 1, prototyp: 2, testy: 3, pilotaz: 4, stosowane: 5 }
+
+export function trlScore(trl: number | null): number | null {
+  if (!trl) return null
+  return Math.max(1, Math.min(5, Math.round((trl / 9) * 5)))
+}
+
+export function cardCriteria(card: InnovationCard): Partial<Record<Criterion, number>> {
+  const scores: Partial<Record<Criterion, number>> = { poziom_wdrozenia: LEVEL_SCORE[card.implementation.value.level] }
+  const trl = card.area === "technologiczna" ? trlScore(card.trl.value) : null
+  if (trl != null) scores.dojrzalosc_technologiczna = trl
+  return scores
+}
+
+export function potentialScore(scores: Partial<Record<Criterion, number>>): number {
+  const used = CRITERIA_INFO.filter((c) => scores[c.id] != null)
+  const weight = used.reduce((s, c) => s + c.weight, 0)
+  if (!weight) return 0
+  const total = used.reduce((s, c) => s + c.weight * ((scores[c.id] ?? 0) / 5), 0) / weight
   return Math.round(total * 1000) / 10
 }
 
-export function rubricText(): string {
-  return CRITERIA_INFO.map(
-    (c) =>
-      `- ${c.id} (${c.label}, waga ${Math.round(c.weight * 100)}%): ${c.question}\n  1: ${c.levels[1]}\n  3: ${c.levels[3]}\n  5: ${c.levels[5]}`,
-  ).join("\n")
+export function rubricText(ids: Criterion[]): string {
+  return CRITERIA_INFO.filter((c) => ids.includes(c.id))
+    .map((c) => `- ${c.id} (${c.label}): ${c.question}\n  1: ${c.levels[1]}\n  3: ${c.levels[3]}\n  5: ${c.levels[5]}`)
+    .join("\n")
 }
