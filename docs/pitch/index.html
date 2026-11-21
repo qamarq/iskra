@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>ISKRA – pitch deck</title>
+<style>
+@font-face { font-family: "Bricolage Grotesque"; src: url(fonts/BricolageGrotesque-700.ttf); font-weight: 500 700; }
+@font-face { font-family: "Bricolage Grotesque"; src: url(fonts/BricolageGrotesque-800.ttf); font-weight: 800; }
+@font-face { font-family: "Figtree"; src: url(fonts/Figtree-400.ttf); font-weight: 400 500; }
+@font-face { font-family: "Figtree"; src: url(fonts/Figtree-600.ttf); font-weight: 600; }
+@font-face { font-family: "Figtree"; src: url(fonts/Figtree-700.ttf); font-weight: 700; }
+@font-face { font-family: "Figtree"; src: url(fonts/Figtree-800.ttf); font-weight: 800; }
+:root {
+  --ember: #E4572E; --ember-deep: #B83A16; --glow: #FFC56B; --ink: #1D1A2B; --paper: #FFF3EA; --card: #FFFFFF;
+  --mint: #3CC99B; --lilac: #A78BFA; --sky: #5BB8F5; --pink: #FF7AA8; --soft: #6B5E6E;
+}
+@page { size: 1920px 1080px; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #222; }
+body { font-family: "Figtree", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; color: #fff; page-break-after: always; break-after: page;
+  background: radial-gradient(1200px 900px at 85% 20%, #FF8A5C 0%, transparent 60%), radial-gradient(900px 700px at 10% 100%, #C8401A 0%, transparent 60%), var(--ember); }
+.slide.paper { color: var(--ink); background: radial-gradient(900px 700px at 100% 0%, #FFE1CF 0%, transparent 60%), radial-gradient(800px 600px at 0% 100%, #FFE9F1 0%, transparent 60%), var(--paper); }
+.slide.ink { background: radial-gradient(1000px 800px at 90% 10%, #3A2E5C 0%, transparent 60%), radial-gradient(800px 700px at 0% 100%, #4A2433 0%, transparent 60%), var(--ink); }
+.meta { position: absolute; top: 28px; left: 40px; right: 40px; z-index: 30; display: flex; justify-content: space-between; font: 700 22px/1 "Figtree", sans-serif; }
+.meta .brand { display: flex; align-items: center; gap: 12px; }
+.meta .brand svg { width: 34px; height: 34px; }
+.meta .right { color: var(--glow); }
+.paper .meta .right { color: var(--ember); }
+.display { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -0.045em; line-height: 0.86; }
+.h2 { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; font-size: 100px; }
+.body { font: 600 30px/1.34 "Figtree", sans-serif; }
+.small { font: 600 22px/1.4 "Figtree", sans-serif; }
+.mark { background: linear-gradient(180deg, #FFE2A8, var(--glow)); color: var(--ink); padding: 0 12px; border-radius: 12px; box-shadow: inset 0 -4px 0 rgba(0,0,0,.08), inset 0 3px 0 rgba(255,255,255,.6); }
+.paper .mark { background: linear-gradient(180deg, #FF8A5C, var(--ember)); color: #fff; }
+.accent { color: var(--ember); }
+.sun { color: var(--glow); }
+.phone { position: absolute; aspect-ratio: 390 / 844; border-radius: 58px; border: 13px solid #241A2E; background: #241A2E; overflow: hidden; box-shadow: 0 50px 90px -30px rgba(40,10,0,.55), inset 0 0 0 2px rgba(255,255,255,.08); z-index: 5; }
+.phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; border-radius: 44px; }
+.browser { position: absolute; border-radius: 22px; overflow: hidden; background: #F4E9E1; box-shadow: 0 50px 100px -40px rgba(40,10,0,.6), 0 0 0 1px rgba(0,0,0,.04); z-index: 4; }
+.browser .bar { height: 40px; display: flex; align-items: center; gap: 9px; padding: 0 16px; background: linear-gradient(180deg, #FBEFE7, #EFDFD3); }
+.browser .bar i { width: 13px; height: 13px; border-radius: 50%; display: block; box-shadow: inset 0 -2px 3px rgba(0,0,0,.18), inset 0 2px 2px rgba(255,255,255,.7); }
+.browser .bar i:nth-child(1) { background: #FF7A6B; } .browser .bar i:nth-child(2) { background: #FFC56B; } .browser .bar i:nth-child(3) { background: #5FD3A3; }
+.browser .bar span { margin-left: 18px; font: 600 16px "Figtree"; color: #8A6F66; background: #fff; padding: 5px 16px; border-radius: 8px; }
+.browser img { display: block; width: 100%; }
+.pill { display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px; border-radius: 999px; font: 700 26px "Figtree"; white-space: nowrap; color: var(--ink);
+  background: linear-gradient(180deg, #FFFFFF, #FFE9DC); box-shadow: 0 16px 30px -14px rgba(80,20,0,.55), inset 0 -5px 0 rgba(228,87,46,.18), inset 0 3px 0 rgba(255,255,255,.9); }
+.card { border-radius: 30px; padding: 28px 30px; color: var(--ink); background: linear-gradient(180deg, #FFFFFF, #FFF4EE);
+  box-shadow: 0 26px 50px -26px rgba(120,40,10,.45), inset 0 -6px 0 rgba(228,87,46,.08), inset 0 3px 0 rgba(255,255,255,1); }
+.card h4 { font: 700 34px/1.05 "Bricolage Grotesque"; letter-spacing: -0.02em; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+.card p { font: 600 20px/1.38 "Figtree"; color: var(--soft); }
+.num { font-family: "Bricolage Grotesque"; font-weight: 800; letter-spacing: -0.04em; line-height: .9; }
+.foot { position: absolute; left: 40px; bottom: 28px; font: 600 16px/1.3 "Figtree"; opacity: .75; }
+.tag { white-space: nowrap; display: inline-flex; align-items: center; font: 800 18px/1 "Figtree"; letter-spacing: .12em; text-transform: uppercase; padding: 11px 16px; border-radius: 14px; color: #fff;
+  background: linear-gradient(180deg, #FF8A5C, var(--ember)); box-shadow: 0 10px 20px -10px rgba(180,50,10,.8), inset 0 -4px 0 rgba(0,0,0,.14), inset 0 3px 0 rgba(255,255,255,.45); }
+.ink .tag { background: linear-gradient(180deg, #FFE2A8, var(--glow)); color: var(--ink); }
+.jelly { position: absolute; border-radius: 50%; z-index: 2;
+  background: radial-gradient(circle at 32% 28%, var(--hi, #FFD7C2) 0%, var(--c, #FF8A5C) 38%, var(--lo, #C8401A) 100%);
+  box-shadow: inset -14px -20px 34px rgba(0,0,0,.18), inset 12px 16px 26px rgba(255,255,255,.55), 0 30px 50px -22px var(--sh, rgba(140,30,0,.6)); }
+.jelly::after { content: ""; position: absolute; left: 18%; top: 12%; width: 34%; height: 22%; border-radius: 50%; background: rgba(255,255,255,.75); filter: blur(3px); transform: rotate(-24deg); }
+.j-glow { --hi: #FFF1C9; --c: #FFC56B; --lo: #E08A12; --sh: rgba(200,120,0,.55); }
+.j-mint { --hi: #D2FFF0; --c: #5FD3A3; --lo: #1E8F6C; --sh: rgba(20,110,80,.5); }
+.j-lilac { --hi: #F0E9FF; --c: #B79CFF; --lo: #6D4FD8; --sh: rgba(90,60,190,.5); }
+.j-sky { --hi: #E2F4FF; --c: #7CC8FA; --lo: #2B7FC0; --sh: rgba(30,100,170,.5); }
+.j-pink { --hi: #FFE3EE; --c: #FF8FB6; --lo: #D9457A; --sh: rgba(200,50,100,.5); }
+.j-ember { --hi: #FFD7C2; --c: #FF8A5C; --lo: #C8401A; }
+.bot { position: absolute; z-index: 8; filter: drop-shadow(0 34px 30px rgba(60,10,0,.35)); }
+.spark { position: absolute; z-index: 3; }
+.bubble { position: absolute; z-index: 9; padding: 16px 24px; border-radius: 28px; font: 800 30px/1.1 "Bricolage Grotesque"; color: var(--ink);
+  background: linear-gradient(180deg, #fff, #FFEFE6); box-shadow: 0 20px 40px -18px rgba(80,20,0,.6), inset 0 -5px 0 rgba(228,87,46,.15), inset 0 3px 0 #fff; }
+.ico { flex: none; width: 58px; height: 58px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; position: relative;
+  background: radial-gradient(circle at 32% 28%, var(--hi), var(--c) 45%, var(--lo)); box-shadow: inset -6px -8px 14px rgba(0,0,0,.16), inset 5px 6px 10px rgba(255,255,255,.6), 0 12px 20px -10px var(--sh); }
+.fbadge { display: inline-flex; align-items: center; padding: 10px 20px; border-radius: 999px; font: 800 22px "Figtree"; }
+.fb-ok { background: linear-gradient(180deg, #D9FBEC, #A9EBD0); color: #136B4F; box-shadow: inset 0 -4px 0 rgba(0,0,0,.08), inset 0 3px 0 #fff, 0 10px 20px -12px rgba(20,110,80,.7); }
+.fb-est { background: linear-gradient(180deg, #FFF3D1, #FFDF91); color: #7A5304; box-shadow: inset 0 -4px 0 rgba(0,0,0,.08), inset 0 3px 0 #fff, 0 10px 20px -12px rgba(200,140,0,.7); }
+.fb-none { background: linear-gradient(180deg, #F6EFF2, #E5DAE0); color: #6B5E6E; box-shadow: inset 0 -4px 0 rgba(0,0,0,.08), inset 0 3px 0 #fff; }
+</style>
+</head>
+<body>
+
+<!-- 1. Tytuł -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="jelly j-glow" style="width:170px;height:170px;left:760px;top:70px"></div>
+  <div class="jelly j-pink" style="width:90px;height:90px;left:1820px;top:930px"></div>
+  <div class="jelly j-mint" style="width:120px;height:120px;left:690px;top:820px"></div>
+  <div class="jelly j-lilac" style="width:60px;height:60px;left:1780px;top:120px"></div>
+  <div data-spark="glow" style="left:1080px;top:60px;width:90px"></div>
+  <div data-spark="white" style="left:1700px;top:780px;width:70px"></div>
+  <div style="position:absolute;left:44px;top:100px;display:flex;flex-direction:column;gap:2px;z-index:6">
+    <div style="display:flex;align-items:baseline;white-space:nowrap"><span class="display" style="font-size:150px;line-height:.9;width:130px;text-shadow:0 10px 0 rgba(150,30,0,.25)">I</span><span style="font:700 64px/1 'Bricolage Grotesque';letter-spacing:-.03em;color:var(--glow)">dentyfikacja</span></div>
+    <div style="display:flex;align-items:baseline;white-space:nowrap"><span class="display" style="font-size:150px;line-height:.9;width:130px;text-shadow:0 10px 0 rgba(150,30,0,.25)">S</span><span style="font:700 64px/1 'Bricolage Grotesque';letter-spacing:-.03em;color:var(--glow)">elekcja</span></div>
+    <div style="display:flex;align-items:baseline;white-space:nowrap"><span class="display" style="font-size:150px;line-height:.9;width:130px;text-shadow:0 10px 0 rgba(150,30,0,.25)">K</span><span style="font:700 64px/1 'Bricolage Grotesque';letter-spacing:-.03em;color:var(--glow)">ojarzenie</span></div>
+    <div style="display:flex;align-items:baseline;white-space:nowrap"><span class="display" style="font-size:150px;line-height:.9;width:130px;text-shadow:0 10px 0 rgba(150,30,0,.25)">R</span><span style="font:700 64px/1 'Bricolage Grotesque';letter-spacing:-.03em;color:var(--glow)">ozwój</span></div>
+    <div style="display:flex;align-items:baseline;white-space:nowrap"><span class="display" style="font-size:150px;line-height:.9;width:130px;text-shadow:0 10px 0 rgba(150,30,0,.25)">A</span><span style="font:700 64px/1 'Bricolage Grotesque';letter-spacing:-.03em;color:var(--glow)">daptacja</span></div>
+  </div>
+  <div class="browser" style="width:930px;left:860px;top:210px;transform:rotate(-3deg)"><div class="bar"><i></i><i></i><i></i><span>iskra · radar polskich innowacji</span></div><img src="img/w-landing.jpg"></div>
+  <div class="phone" style="width:300px;left:1560px;top:440px;transform:rotate(6deg)"><img src="img/m-card.jpg"></div>
+  <div data-bot="ember" data-pose="wave" style="left:690px;top:610px;width:250px"></div>
+  <div class="bubble" style="left:820px;top:560px;transform:rotate(-4deg)">Cześć, jestem Iskierka!</div>
+  <div style="position:absolute;left:44px;bottom:46px;max-width:620px;z-index:6">
+    <div style="font:700 36px/1.16 'Bricolage Grotesque';letter-spacing:-.02em">Zanim zaczniesz od zera, sprawdź, kto już to rozwiązał. Radar istniejących polskich innowacji.</div>
+  </div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="body" style="position:absolute;left:40px;top:130px;width:1080px;font-size:34px;line-height:1.32;z-index:6">
+    <p>Innowacje powstają w uczelniach, szkołach i samorządach, ale giną w aktualnościach. W naszym przebiegu radaru <span class="mark">157 z 189 stron</span> to były wydarzenia, nabory i rankingi.</p>
+    <p style="margin-top:30px">Te same problemy rozwiązuje się od nowa: <span class="mark">dwie gminy</span> z „Mobilnym Urzędnikiem”, dwie uczelnie z akustycznym wykrywaniem dronów, dwie gminy z własną bramką SMS.</p>
+    <p style="margin-top:30px">Z komunikatu nie wiadomo, czy to koncepcja, czy działające wdrożenie, i <span class="mark">ile w nim faktów</span>.</p>
+  </div>
+  <div style="position:absolute;right:70px;top:130px;width:640px;display:flex;flex-direction:column;gap:20px;z-index:6">
+    <div class="pill">🎓 Uczelnie · aktualności</div>
+    <div class="pill" style="margin-left:90px">🏛️ Samorządy · BIP</div>
+    <div class="pill" style="margin-left:30px">🏫 Szkoły · konkursy</div>
+    <div class="pill" style="margin-left:120px">📰 Komunikaty prasowe</div>
+    <div class="pill" style="margin-left:10px">🧪 Patenty i projekty</div>
+  </div>
+  <div data-bot="glow" data-pose="confused" style="left:1440px;top:600px;width:240px"></div>
+  <div class="bubble" style="left:1640px;top:590px;transform:rotate(5deg);font-size:46px">?!</div>
+  <div class="jelly j-glow" style="width:110px;height:110px;left:1260px;top:720px"></div>
+  <div class="jelly j-pink" style="width:60px;height:60px;left:1820px;top:560px"></div>
+  <div class="display" style="position:absolute;left:24px;bottom:-40px;font-size:300px;white-space:nowrap;z-index:5;text-shadow:0 14px 0 rgba(150,30,0,.25)">PROBLEM</div>
+  <div class="foot" style="left:auto;right:60px;bottom:auto;top:62px;text-align:right">Dane: przebieg radaru ISKRA, 19 źródeł, listopad 2026</div>
+</section>
+
+<!-- 3. Rozwiązanie -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="display" style="position:absolute;right:30px;top:90px;font-size:190px;white-space:nowrap;text-align:right;z-index:1">
+    <div>ROZWIĄZANIE</div><div style="opacity:.5">ROZWIĄZANIE</div><div style="opacity:.22">ROZWIĄZANIE</div>
+  </div>
+  <div class="phone" style="width:320px;left:1080px;top:470px;transform:rotate(-5deg)"><img src="img/m-landing.jpg"></div>
+  <div class="phone" style="width:320px;left:1450px;top:430px;transform:rotate(5deg)"><img src="img/m-search.jpg"></div>
+  <div data-bot="mint" data-pose="lupa" style="left:870px;top:690px;width:220px"></div>
+  <div class="jelly j-glow" style="width:80px;height:80px;left:1000px;top:420px"></div>
+  <div data-spark="glow" style="left:1830px;top:380px;width:70px"></div>
+  <div style="position:absolute;left:40px;bottom:70px;display:flex;flex-direction:column;gap:16px;font:700 38px/1.15 'Bricolage Grotesque';letter-spacing:-.015em;max-width:880px;z-index:6">
+    <div>Radar sam czyta strony instytucji → <span class="sun">karta w 30 sekund</span></div>
+    <div>Definicja innowacji z Oslo Manual 2018, trzy obszary z FAQ</div>
+    <div>Fakty z cytatem sprawdzonym w źródle, szacunki osobno</div>
+    <div>Potencjał, wiarygodność i rekomendacja z jawnych reguł</div>
+    <div>Wyszukiwanie po potrzebie i porównanie kart</div>
+  </div>
+</section>
+
+<!-- 4. Jak działa -->
+<section class="slide paper">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px;max-width:1300px">Od strony uczelni do karty <span class="accent">w&nbsp;30&nbsp;sekund</span></div>
+  <div class="body" style="position:absolute;left:40px;top:330px;max-width:1300px;color:var(--soft);font-size:28px">Cztery małe Iskierki, każda z jednym zadaniem. Pewne trafienia trafiają do bazy same, niepewne czekają na analityka.</div>
+  <div style="position:absolute;left:40px;top:470px;width:440px">
+    <div data-bot="ember" data-pose="lupa" style="position:absolute;left:330px;top:-120px;width:130px"></div>
+    <div class="browser" style="position:relative;width:440px;height:300px"><div class="bar"><i></i><i></i><i></i><span>iskra</span></div><img src="img/w-queue.jpg" style="height:260px;object-fit:cover;object-position:left top"></div>
+    <div style="margin-top:22px;display:flex;align-items:center;gap:14px"><span class="tag">1 · czyta</span><span style="font:700 28px/1.1 'Bricolage Grotesque'">Odsiewa szum</span></div>
+  </div>
+  <div style="position:absolute;left:505px;top:470px;width:440px">
+    <div data-bot="glow" data-pose="karta" style="position:absolute;left:330px;top:-120px;width:130px"></div>
+    <div class="browser" style="position:relative;width:440px;height:300px"><div class="bar"><i></i><i></i><i></i><span>iskra</span></div><img src="img/w-facts.jpg" style="height:260px;object-fit:cover;object-position:left top"></div>
+    <div style="margin-top:22px;display:flex;align-items:center;gap:14px"><span class="tag">2 · rozpoznaje</span><span style="font:700 28px/1.1 'Bricolage Grotesque'">Buduje kartę</span></div>
+  </div>
+  <div style="position:absolute;left:970px;top:470px;width:440px">
+    <div data-bot="mint" data-pose="ok" style="position:absolute;left:330px;top:-120px;width:130px"></div>
+    <div class="browser" style="position:relative;width:440px;height:300px"><div class="bar"><i></i><i></i><i></i><span>iskra</span></div><img src="img/w-cred.jpg" style="height:260px;object-fit:cover;object-position:left top"></div>
+    <div style="margin-top:22px;display:flex;align-items:center;gap:14px"><span class="tag">3 · weryfikuje</span><span style="font:700 28px/1.1 'Bricolage Grotesque'">Sprawdza cytaty</span></div>
+  </div>
+  <div style="position:absolute;left:1435px;top:470px;width:440px">
+    <div data-bot="lilac" data-pose="cel" style="position:absolute;left:330px;top:-120px;width:130px"></div>
+    <div class="browser" style="position:relative;width:440px;height:300px"><div class="bar"><i></i><i></i><i></i><span>iskra</span></div><img src="img/w-rec.jpg" style="height:260px;object-fit:cover;object-position:left top"></div>
+    <div style="margin-top:22px;display:flex;align-items:center;gap:14px"><span class="tag">4 · rekomenduje</span><span style="font:700 28px/1.1 'Bricolage Grotesque'">Wskazuje drogę</span></div>
+  </div>
+  <div class="small" style="position:absolute;left:40px;bottom:40px;color:var(--soft)">Crawler z robots.txt · Claude Sonnet 5.5 ze structured outputs · embeddingi i pgvector · publikacje z OpenAlex · cykliczne odświeżanie</div>
+</section>
+
+<!-- 5. Karta -->
+<section class="slide ink">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px;width:640px;font-size:80px">Fakty oddzielone <span class="sun">od szacunków</span></div>
+  <div style="position:absolute;left:40px;top:430px;width:620px;display:flex;flex-direction:column;gap:30px">
+    <div style="display:flex;gap:20px;align-items:flex-start"><span class="fbadge fb-ok">potwierdzone</span><div class="small" style="opacity:.85">program odnalazł cytat w tekście źródła</div></div>
+    <div style="display:flex;gap:20px;align-items:flex-start"><span class="fbadge fb-est">szacunek</span><div class="small" style="opacity:.85">wniosek modelu, wyraźnie oznaczony</div></div>
+    <div style="display:flex;gap:20px;align-items:flex-start"><span class="fbadge fb-none">brak danych</span><div class="small" style="opacity:.85">czego źródło nie mówi, z listą braków</div></div>
+    <div class="small" style="opacity:.85;margin-top:6px">Obszar, charakter, status wdrożenia, TRL, nowość, efekty, polskie IP i dowody: patent, publikacja, projekt, dane z wdrożenia.</div>
+  </div>
+  <div class="browser" style="width:1180px;left:700px;top:150px"><div class="bar"><i></i><i></i><i></i><span>iskra/innowacje/antybakteryjna-powloka-tio2</span></div><img src="img/w-card.jpg"></div>
+  <div data-bot="mint" data-pose="ok" style="left:540px;top:820px;width:200px"></div>
+  <div class="jelly j-lilac" style="width:70px;height:70px;left:1830px;top:110px"></div>
+</section>
+
+<!-- 6. Szukaj po potrzebie -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px;width:760px;font-size:88px">Szukasz po potrzebie, <span class="sun">nie po słowach kluczowych</span></div>
+  <div class="body" style="position:absolute;left:40px;top:470px;width:720px;font-size:28px">„Jak ułatwić mieszkańcom załatwianie spraw w urzędzie” znajduje „Mobilnego Urzędnika” z Rzeszowa i Działoszyc, bramkę SMS z Kobióra i e-usługi powiatu jasielskiego.</div>
+  <div style="position:absolute;left:40px;top:690px;width:760px;display:flex;flex-wrap:wrap;gap:14px;z-index:6">
+    <span class="pill" style="font-size:24px;padding:12px 22px">💼 Inwestorzy</span><span class="pill" style="font-size:24px;padding:12px 22px">🏛️ Samorządy</span><span class="pill" style="font-size:24px;padding:12px 22px">🎓 Uczelnie</span><span class="pill" style="font-size:24px;padding:12px 22px">🏫 Szkoły</span><span class="pill" style="font-size:24px;padding:12px 22px">🚀 Startupy</span><span class="pill" style="font-size:24px;padding:12px 22px">🛠️ Wynalazcy</span>
+  </div>
+  <div class="browser" style="width:1050px;left:830px;top:150px;transform:rotate(-2deg)"><div class="bar"><i></i><i></i><i></i><span>iskra/innowacje?q=jak ułatwić mieszkańcom…</span></div><img src="img/w-search.jpg"></div>
+  <div class="browser" style="width:760px;left:1110px;top:640px;transform:rotate(2deg);z-index:6"><div class="bar"><i></i><i></i><i></i><span>iskra/porownaj</span></div><img src="img/w-compare.jpg"></div>
+  <div data-bot="sky" data-pose="lupa" style="left:40px;top:860px;width:170px"></div>
+  <div class="jelly j-glow" style="width:90px;height:90px;left:980px;top:880px"></div>
+</section>
+
+<!-- 7. Przejrzystość -->
+<section class="slide paper">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px">Każda ocena <span class="accent">ma uzasadnienie</span></div>
+  <div style="position:absolute;left:40px;top:300px;width:900px">
+    <div class="browser" style="position:relative;width:900px;height:620px"><div class="bar"><i></i><i></i><i></i><span>Ocena potencjału · kryteria z FAQ PCI</span></div><img src="img/w-score.jpg" style="height:580px;object-fit:cover;object-position:top"></div>
+  </div>
+  <div style="position:absolute;left:980px;top:300px;width:900px">
+    <div class="browser" style="position:relative;width:900px"><div class="bar"><i></i><i></i><i></i><span>Wiarygodność · liczona bez AI</span></div><img src="img/w-cred.jpg"></div>
+  </div>
+  <div data-bot="lilac" data-pose="cel" style="left:1640px;top:770px;width:210px"></div>
+  <div class="bubble" style="left:1240px;top:800px;transform:rotate(-3deg);font-size:26px">analityk może poprawić ocenę</div>
+  <div class="small" style="position:absolute;left:40px;bottom:40px;color:var(--soft);max-width:1500px">Poziom wdrożenia i TRL wprost z karty · innowacyjność i potencjał zastosowania od modelu, z uzasadnieniem i cytatem · wiarygodność: cytaty, rodzaj źródła, dokumentacja, liczba źródeł</div>
+</section>
+
+<!-- 8. Dane -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px">Prawdziwe dane, <span class="sun">prawdziwe instytucje</span></div>
+  <div style="position:absolute;left:40px;top:290px;right:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;z-index:6">
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">189</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">przeczytanych stron</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">19 źródeł: uczelnie, samorządy, szkoły, PCI</div></div>
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">157</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">odsianych z uzasadnieniem</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">wydarzenia, nabory, rankingi to nie innowacje</div></div>
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">27</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">innowacji w bazie</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">24 instytucje · 3 obszary z FAQ</div></div>
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">5</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">niepewnych trafień</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">czeka w kolejce na decyzję analityka</div></div>
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">63/100</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">średnia wiarygodność</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">liczona z cytatów i dokumentacji</div></div>
+    <div class="card" style="padding:38px 40px"><div class="num accent" style="font-size:110px">4 pary</div><div style="font:800 30px/1.15 'Bricolage Grotesque';margin-top:14px">podobnych rozwiązań</div><div class="small" style="color:var(--soft);font-size:19px;margin-top:6px">w różnych gminach i uczelniach</div></div>
+  </div>
+  <div data-bot="glow" data-pose="wave" style="left:1660px;top:790px;width:210px"></div>
+  <div class="jelly j-mint" style="width:90px;height:90px;left:1540px;top:880px"></div>
+  <div class="jelly j-lilac" style="width:56px;height:56px;left:1460px;top:960px"></div>
+  <div data-spark="glow" style="left:1840px;top:740px;width:56px"></div>
+  <div class="small" style="position:absolute;left:40px;bottom:34px;opacity:.85">PostgreSQL + pgvector · crawler z robots.txt i wzorcami artykułów dla każdego źródła · Podkarpacie i Wrocław</div>
+</section>
+
+<!-- 9. Szybko, tanio, uczciwie -->
+<section class="slide paper">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="h2" style="position:absolute;left:40px;top:110px">Szybko, tanio <span class="accent">i uczciwie</span></div>
+  <div style="position:absolute;left:40px;top:300px;right:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+    <div class="card" style="padding:56px 48px 64px"><div class="num accent" style="font-size:170px">~30 s</div><div style="font:800 34px/1.15 'Bricolage Grotesque';margin-top:18px">od linku do gotowej karty</div><div class="small" style="color:var(--soft);margin-top:8px">wykrycie, karta, podobne, publikacje, ocena, odbiorcy</div></div>
+    <div class="card" style="padding:56px 48px 64px"><div class="num accent" style="font-size:170px">~0,1$</div><div style="font:800 34px/1.15 'Bricolage Grotesque';margin-top:18px">za pełną analizę innowacji</div><div class="small" style="color:var(--soft);margin-top:8px">ułamek centa za przesianie jednej strony</div></div>
+    <div class="card" style="padding:56px 48px 64px"><div class="num accent" style="font-size:170px">0 AI</div><div style="font:800 34px/1.15 'Bricolage Grotesque';margin-top:18px">w liczeniu wiarygodności</div><div class="small" style="color:var(--soft);margin-top:8px">i w wyborze rekomendacji: jawne reguły, ten sam wynik dla tych samych danych</div></div>
+  </div>
+  <div data-bot="ember" data-pose="ok" style="left:1660px;top:770px;width:210px"></div>
+  <div data-bot="mint" data-pose="wave" style="left:1480px;top:830px;width:160px"></div>
+  <div data-bot="lilac" data-pose="cel" style="left:1320px;top:870px;width:130px"></div>
+  <div class="jelly j-glow" style="width:70px;height:70px;left:1220px;top:960px"></div>
+  <div class="small" style="position:absolute;left:40px;bottom:40px;color:var(--soft);max-width:1400px">Model lokalny możliwy przez API zgodne z OpenAI · zapasowy model przy odmowie · otwarty kod EUPL-1.2</div>
+</section>
+
+<!-- 10. Funkcje -->
+<section class="slide paper">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="display accent" style="position:absolute;left:-10px;bottom:30px;font-size:210px;transform:rotate(-90deg);transform-origin:left bottom;translate:180px 0;white-space:nowrap">Funkcje</div>
+  <div style="position:absolute;left:270px;top:110px;right:40px;bottom:50px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:26px">
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-ember">🔎</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Szukanie po znaczeniu</span></div><p>opisz problem, radar znajdzie rozwiązanie</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-glow">🕷️</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Crawler</span></div><p>strony uczelni, gmin i szkół, z robots.txt</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-sky">📘</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Oslo Manual</span></div><p>definicja innowacji i 3 obszary z FAQ</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-mint">🧾</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Karta innowacji</span></div><p>status wdrożenia, TRL, IP, efekty, dowody</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-mint">✅</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Weryfikacja cytatów</span></div><p>potwierdzone, szacunek, brak danych</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-ember">📈</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Potencjał 0–100</span></div><p>4 kryteria z wagami, korekta analityka</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-lilac">🛡️</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Wiarygodność</span></div><p>liczona bez AI, z rozbiciem na części</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-glow">🧭</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Rekomendacja</span></div><p>licencja, zastosowanie, pilotaż, rozwój</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-sky">🧩</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Podobne i duplikaty</span></div><p>wektory znaczeniowe i scalanie źródeł</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-pink">⚖️</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Porównywarka</span></div><p>2–4 karty obok siebie</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-lilac">🔁</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Cykliczna aktualizacja</span></div><p>nowe artykuły i zmiany w źródłach</p></div>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;gap:16px"><span class="ico j-pink">📊</span><span style="font:800 28px/1.05 'Bricolage Grotesque';letter-spacing:-.02em">Statystyki i API</span></div><p>anonimowa analityka, JSON z kartami</p></div>
+  </div>
+</section>
+
+<!-- 11. CTA -->
+<section class="slide">
+  <div class="meta"><span class="brand"><span data-logo></span>Solvro Kamil</span><span class="right">HackNation 2026 · PCI</span></div>
+  <div class="jelly j-glow" style="width:150px;height:150px;left:820px;top:90px"></div>
+  <div class="jelly j-mint" style="width:80px;height:80px;left:1820px;top:140px"></div>
+  <div class="jelly j-pink" style="width:110px;height:110px;left:700px;top:880px"></div>
+  <div data-spark="glow" style="left:960px;top:820px;width:80px"></div>
+  <div data-spark="white" style="left:1790px;top:900px;width:60px"></div>
+  <div class="h2" style="position:absolute;left:40px;top:190px;width:820px;font-size:96px;z-index:6">Zanim zaczniesz od zera, <span class="sun">zapytaj ISKRĘ</span></div>
+  <div style="position:absolute;left:40px;bottom:60px;display:flex;align-items:center;gap:30px;z-index:6">
+    <div style="background:#fff;border-radius:28px;padding:16px;box-shadow:0 26px 50px -24px rgba(80,20,0,.6), inset 0 -5px 0 rgba(228,87,46,.15)"><img src="img/qr-repo.png" style="width:220px;height:220px;display:block"></div>
+    <div><div style="font:800 40px/1 'Bricolage Grotesque'">Kod i dokumentacja</div><div class="body" style="margin-top:10px;opacity:.9">github.com/qamarq/iskra</div><div class="small" style="margin-top:6px;opacity:.75">open source · EUPL-1.2</div></div>
+  </div>
+  <div class="browser" style="width:900px;left:900px;top:210px;transform:rotate(-3deg)"><div class="bar"><i></i><i></i><i></i><span>iskra · radar polskich innowacji</span></div><img src="img/w-landing.jpg"></div>
+  <div class="phone" style="width:290px;left:1590px;top:470px;transform:rotate(6deg)"><img src="img/m-card.jpg"></div>
+  <div data-bot="ember" data-pose="cheer" style="left:620px;top:560px;width:270px"></div>
+  <div data-bot="mint" data-pose="wave" style="left:1440px;top:800px;width:150px"></div>
+</section>
+
+<script>
+const PAL = {
+  ember: ["#FFD7C2", "#FF8A5C", "#C8401A"],
+  glow: ["#FFF1C9", "#FFC56B", "#D98510"],
+  mint: ["#D2FFF0", "#5FD3A3", "#1E8F6C"],
+  lilac: ["#F0E9FF", "#B79CFF", "#6D4FD8"],
+  sky: ["#E2F4FF", "#7CC8FA", "#2B7FC0"],
+  pink: ["#FFE3EE", "#FF8FB6", "#D9457A"],
+}
+let uid = 0
+function sparkPath(cx, cy, r) {
+  const k = r * 0.28
+  return "M" + cx + " " + (cy - r) + " Q" + (cx + k) + " " + (cy - k) + " " + (cx + r) + " " + cy + " Q" + (cx + k) + " " + (cy + k) + " " + cx + " " + (cy + r) + " Q" + (cx - k) + " " + (cy + k) + " " + (cx - r) + " " + cy + " Q" + (cx - k) + " " + (cy - k) + " " + cx + " " + (cy - r) + "Z"
+}
+function bot(color, pose) {
+  const [hi, c, lo] = PAL[color] || PAL.ember
+  const id = "b" + uid++
+  const arm = (x, y, rot) => '<g transform="translate(' + x + " " + y + ") rotate(" + rot + ')"><rect x="-11" y="0" width="22" height="46" rx="11" fill="url(#' + id + 'g)"/><circle cx="0" cy="48" r="13" fill="url(#' + id + 'g)"/></g>'
+  const props = {
+    lupa: '<g transform="translate(176 150) rotate(-20)"><circle r="20" fill="rgba(200,240,255,.55)" stroke="#2B2140" stroke-width="7"/><ellipse cx="-6" cy="-7" rx="7" ry="4" fill="#fff" opacity=".9"/><rect x="-4" y="20" width="8" height="26" rx="4" fill="#2B2140"/></g>',
+    karta: '<g transform="translate(168 140) rotate(10)"><rect x="-20" y="-26" width="40" height="52" rx="8" fill="#fff" stroke="#2B2140" stroke-width="4"/><rect x="-12" y="-14" width="24" height="5" rx="2.5" fill="#E4572E"/><rect x="-12" y="-3" width="24" height="5" rx="2.5" fill="#C9BFD0"/><rect x="-12" y="8" width="16" height="5" rx="2.5" fill="#C9BFD0"/></g>',
+    ok: '<g transform="translate(172 136)"><circle r="22" fill="#5FD3A3" stroke="#fff" stroke-width="4"/><path d="M-10 0 L-3 8 L11 -8" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>',
+    cel: '<g transform="translate(172 136)"><circle r="22" fill="#fff" stroke="#E4572E" stroke-width="5"/><circle r="12" fill="#FFC56B"/><circle r="5" fill="#E4572E"/></g>',
+  }
+  const leftArm = pose === "cheer" ? arm(44, 150, 150) : arm(44, 152, 25)
+  const rightArm = pose === "wave" || pose === "cheer" ? arm(156, 150, -150) : props[pose] ? arm(156, 150, -60) : arm(156, 152, -25)
+  const eyes = pose === "confused"
+    ? '<ellipse cx="82" cy="90" rx="9" ry="12" fill="url(#' + id + 'e)"/><path d="M110 92 q8 -10 16 0" stroke="url(#' + id + 'e)" stroke-width="7" fill="none" stroke-linecap="round"/>'
+    : '<ellipse cx="82" cy="90" rx="9" ry="12" fill="url(#' + id + 'e)"/><ellipse cx="118" cy="90" rx="9" ry="12" fill="url(#' + id + 'e)"/><circle cx="85" cy="85" r="3" fill="#fff"/><circle cx="121" cy="85" r="3" fill="#fff"/>'
+  const mouth = pose === "confused" ? '<path d="M88 110 q6 -5 12 0 q6 5 12 0" stroke="#7FF5CF" stroke-width="4" fill="none" stroke-linecap="round"/>' : '<path d="M88 106 q12 12 24 0" stroke="#7FF5CF" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  return '<svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible">' +
+    '<defs>' +
+    '<radialGradient id="' + id + 'g" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="' + hi + '"/><stop offset=".45" stop-color="' + c + '"/><stop offset="1" stop-color="' + lo + '"/></radialGradient>' +
+    '<linearGradient id="' + id + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A3054"/><stop offset="1" stop-color="#16121F"/></linearGradient>' +
+    '<radialGradient id="' + id + 'e" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#E8FFF7"/><stop offset=".5" stop-color="#7FF5CF"/><stop offset="1" stop-color="#2FBF8F"/></radialGradient>' +
+    '<radialGradient id="' + id + 'k" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF6D9"/><stop offset=".5" stop-color="#FFC56B"/><stop offset="1" stop-color="#E4572E"/></radialGradient>' +
+    '</defs>' +
+    '<ellipse cx="110" cy="232" rx="64" ry="9" fill="rgba(0,0,0,.18)"/>' +
+    '<line x1="110" y1="44" x2="110" y2="22" stroke="' + lo + '" stroke-width="6" stroke-linecap="round"/>' +
+    '<path d="' + sparkPath(110, 16, 18) + '" fill="url(#' + id + 'k)"/><circle cx="105" cy="11" r="3.5" fill="#fff" opacity=".9"/>' +
+    leftArm + rightArm +
+    '<rect x="68" y="140" width="84" height="64" rx="30" fill="url(#' + id + 'g)"/>' +
+    '<circle cx="110" cy="172" r="12" fill="url(#' + id + 'k)"/><ellipse cx="106" cy="167" rx="4" ry="3" fill="#fff" opacity=".8"/>' +
+    '<ellipse cx="88" cy="214" rx="16" ry="11" fill="url(#' + id + 'g)"/><ellipse cx="132" cy="214" rx="16" ry="11" fill="url(#' + id + 'g)"/>' +
+    '<rect x="34" y="42" width="152" height="108" rx="50" fill="url(#' + id + 'g)"/>' +
+    '<ellipse cx="78" cy="58" rx="30" ry="10" fill="#fff" opacity=".55" transform="rotate(-12 78 58)"/>' +
+    '<rect x="54" y="62" width="112" height="66" rx="30" fill="url(#' + id + 's)"/>' +
+    eyes + mouth +
+    '<ellipse cx="62" cy="116" rx="9" ry="6" fill="#FF8FB6" opacity=".75"/><ellipse cx="158" cy="116" rx="9" ry="6" fill="#FF8FB6" opacity=".75"/>' +
+    (props[pose] || "") +
+    "</svg>"
+}
+function spark(kind) {
+  const id = "s" + uid++
+  const fill = kind === "white" ? ["#FFFFFF", "#FFE9DC", "#FFC9AE"] : ["#FFF6D9", "#FFC56B", "#E4572E"]
+  return '<svg viewBox="0 0 100 100" style="width:100%;height:auto;overflow:visible;filter:drop-shadow(0 12px 14px rgba(120,30,0,.35))"><defs><radialGradient id="' + id + '" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="' + fill[0] + '"/><stop offset=".5" stop-color="' + fill[1] + '"/><stop offset="1" stop-color="' + fill[2] + '"/></radialGradient></defs><path d="' + sparkPath(50, 50, 46) + '" fill="url(#' + id + ')"/><ellipse cx="40" cy="34" rx="7" ry="4" fill="#fff" opacity=".9" transform="rotate(-30 40 34)"/></svg>'
+}
+function logo() {
+  const id = "l" + uid++
+  return '<svg viewBox="0 0 34 34"><defs><radialGradient id="' + id + '" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#FFE9DC"/><stop offset="1" stop-color="#FFC9AE"/></radialGradient><radialGradient id="' + id + 'k" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF6D9"/><stop offset=".5" stop-color="#FFC56B"/><stop offset="1" stop-color="#E4572E"/></radialGradient></defs><rect width="34" height="34" rx="10" fill="url(#' + id + ')"/><path d="' + sparkPath(17, 17, 12) + '" fill="url(#' + id + 'k)"/></svg>'
+}
+document.querySelectorAll("[data-bot]").forEach((el) => { el.classList.add("bot"); el.innerHTML = bot(el.dataset.bot, el.dataset.pose) })
+document.querySelectorAll("[data-spark]").forEach((el) => { el.classList.add("spark"); el.innerHTML = spark(el.dataset.spark) })
+document.querySelectorAll("[data-logo]").forEach((el) => { el.outerHTML = logo() })
+</script>
+</body>
+</html>
