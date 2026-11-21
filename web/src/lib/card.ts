@@ -68,7 +68,7 @@ export const innovationCardSchema = z.object({
   missing: z.array(z.string()).describe("Czego brakuje w źródle, by rzetelnie ocenić innowację"),
 })
 
-export type InnovationCardDraft = z.infer<typeof innovationCardSchema>
+export type InnovationCardDraft = z.infer<typeof innovationCardSchema> & { englishQuery?: string }
 
 const q = (what: string) => z.string().describe("Dosłowny fragment źródła potwierdzający " + what + "; pusty tekst, gdy to Twój wniosek albo źródło o tym nie mówi")
 
@@ -104,6 +104,7 @@ export const extractionSchema = z.object({
   target_groups: z.array(z.enum(TARGET_GROUPS)),
   creators: z.array(z.object({ role: z.string(), name: z.string().describe("Pusty tekst, gdy brak nazwiska") })),
   keywords: z.array(z.string()),
+  english_query: z.string().describe("Krótkie zapytanie po angielsku (3–6 słów) do wyszukania publikacji naukowych o tym rozwiązaniu"),
   missing: z.array(z.string()),
 })
 
@@ -132,6 +133,7 @@ export function draftFromExtraction(e: Extraction): InnovationCardDraft {
     creators: e.creators.map((c) => ({ role: c.role, name: t(c.name) })),
     keywords: e.keywords,
     missing: e.missing,
+    englishQuery: e.english_query.trim() || undefined,
   }
 }
 

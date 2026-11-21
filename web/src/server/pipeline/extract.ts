@@ -21,6 +21,7 @@ Zasady:
 - target_groups: inwestorzy, instytucje_publiczne, uczelnie, szkoly, startupy, innowatorzy.
 - creators: rola i nazwisko tylko, jeśli są w tekście.
 - keywords: 5–8 słów kluczowych przydatnych do wyszukiwania.
+- english_query: krótkie zapytanie po angielsku do wyszukania publikacji naukowych.
 - missing: czego brakuje do rzetelnej oceny.`
 
 export async function extractCard(text: string, url?: string | null): Promise<InnovationCard> {

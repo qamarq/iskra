@@ -1,5 +1,7 @@
 import "server-only"
+import { z } from "zod"
 import type { InnovationCard } from "@/lib/card"
+import { structured } from "@/server/ai/client"
 import { USER_AGENT } from "./fetch-page"
 
 export type Publication = { id: string; title: string; year: number | null; url: string; venue: string | null; relevance: number }
@@ -13,8 +15,22 @@ type OpenAlexWork = {
   primary_location?: { source?: { display_name?: string | null } | null } | null
 }
 
+const querySchema = z.object({ query: z.string().describe("3–6 English words") })
+
+async function englishQuery(card: InnovationCard): Promise<string> {
+  if (card.englishQuery) return card.englishQuery
+  const result = await structured(
+    querySchema,
+    "publication_query",
+    "Write a short English search query (3–6 words) to find scientific publications about the described solution.",
+    [card.title, card.summary, card.keywords.join(", ")].join("\n"),
+    { tier: "detect" },
+  )
+  return result.query
+}
+
 export async function searchPublications(card: InnovationCard, limit = 3): Promise<Publication[]> {
-  const query = card.keywords.slice(0, 5).join(" ")
+  const query = await englishQuery(card)
   if (!query) return []
   const params = new URLSearchParams({
     search: query,

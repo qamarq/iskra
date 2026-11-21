@@ -34,7 +34,8 @@ export function recommend(card: InnovationCard, scores: Partial<Record<Criterion
   const candidates: { r: Recommendation; reason: string }[] = []
 
   if (card.ip.value && RANK[level] >= RANK.prototyp) {
-    candidates.push({ r: "licencja", reason: `Rozwiązanie ma ochronę lub zgłoszenie (${card.ip.value}) i działający prototyp lub wdrożenie.` })
+    const ip = card.ip.value.length > 70 ? card.ip.value.slice(0, 67) + "…" : card.ip.value
+    candidates.push({ r: "licencja", reason: `Rozwiązanie ma ochronę lub zgłoszenie (${ip}) i działający prototyp lub wdrożenie.` })
   }
   if (level === "stosowane" && potential >= 3) {
     candidates.push({ r: "wdrozenie", reason: `Stosowane w praktyce, z potencjałem zastosowania ${potential}/5 w innych miejscach.` })
