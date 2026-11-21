@@ -63,7 +63,10 @@ async function upsertInstitution(card: Awaited<ReturnType<typeof extractCard>>):
   return row.id
 }
 
-export async function promoteDocument(documentId: number, { author, note }: { author: string; note: string }) {
+export async function promoteDocument(
+  documentId: number,
+  { author, note, analyze = true }: { author: string; note: string; analyze?: boolean },
+) {
   const [linked] = await db()
     .select({ id: innovation.id, slug: innovation.slug })
     .from(innovation)
@@ -93,19 +96,28 @@ export async function promoteDocument(documentId: number, { author, note }: { au
 
   await recordCreated(created.id, note, author)
   await setStatus(created.id, "zweryfikowana", { author, note: "Potwierdzone jako innowacja" })
-  await analyzeInnovation(created.id)
+  if (analyze) await analyzeInnovation(created.id)
+  else await embedInnovation(created.id)
   return { id: created.id, slug }
+}
+
+export async function embedInnovation(innovationId: number): Promise<number[]> {
+  const [row] = await db().select({ card: innovation.card }).from(innovation).where(eq(innovation.id, innovationId))
+  if (!row) throw new Error(`Innovation ${innovationId} not found`)
+  const [embedding] = await embed([cardEmbeddingText(row.card)])
+  await db().update(innovation).set({ embedding }).where(eq(innovation.id, innovationId))
+  return embedding
 }
 
 export async function analyzeInnovation(innovationId: number) {
   const [row] = await db()
-    .select({ id: innovation.id, slug: innovation.slug, card: innovation.card })
+    .select({ id: innovation.id, slug: innovation.slug, card: innovation.card, embedding: innovation.embedding })
     .from(innovation)
     .where(eq(innovation.id, innovationId))
   if (!row) throw new Error(`Innovation ${innovationId} not found`)
   const card = row.card
 
-  const [embedding] = await embed([cardEmbeddingText(card)])
+  const embedding = row.embedding ?? (await embedInnovation(innovationId))
   const similar = await findSimilarInnovations(embedding, { excludeId: innovationId, limit: 5, minSimilarity: SIMILAR_THRESHOLD })
   const duplicate = similar.find((s) => s.similarity >= DUPLICATE_THRESHOLD)
 
