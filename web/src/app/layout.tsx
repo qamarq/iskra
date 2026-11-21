@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Figtree, Sora } from "next/font/google"
+import { SiteHeader } from "@/components/site-header"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import "./globals.css"
@@ -16,7 +17,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pl" className={`${figtree.variable} ${sora.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <SiteHeader />
+          {children}
+        </TooltipProvider>
         <Toaster />
       </body>
     </html>

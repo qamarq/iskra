@@ -2,7 +2,6 @@
 
 import { and, desc, eq } from "drizzle-orm"
 import { refresh } from "next/cache"
-import { redirect } from "next/navigation"
 import { CRITERIA, INNOVATION_STATUSES, MATCH_STATUSES, type Criterion, type InnovationStatus, type MatchStatus } from "@/lib/domain"
 import { db } from "@/server/db"
 import { document, evaluation, innovation, match } from "@/server/db/schema"
@@ -13,7 +12,7 @@ import { setStatus } from "@/server/pipeline/status"
 
 export async function approveCandidate(documentId: number) {
   const result = await promoteDocument(documentId, { author: "opiekun", note: "Kandydat z radaru zatwierdzony przez opiekuna" })
-  redirect(`/innowacje/${result.slug}`)
+  return { slug: result.slug }
 }
 
 export async function rejectCandidate(documentId: number) {
