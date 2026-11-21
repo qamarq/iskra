@@ -5,51 +5,36 @@ import { toast } from "sonner"
 import { changeStatus, reanalyze } from "@/app/actions"
 import { Button } from "@/components/ui/button"
 import type { InnovationStatus } from "@/lib/domain"
-import { STATUS_LABEL } from "@/lib/labels"
-
-const NEXT: Partial<Record<InnovationStatus, InnovationStatus[]>> = {
-  rekomendowana: ["w_kontakcie", "odrzucona"],
-  w_kontakcie: ["pilotaz", "wdrozona", "odrzucona"],
-  pilotaz: ["wdrozona", "odrzucona"],
-}
 
 export function StatusControl({ innovationId, status }: { innovationId: number; status: InnovationStatus }) {
   const [pending, startTransition] = useTransition()
-  const options = NEXT[status] ?? []
+  const run = (fn: () => Promise<void>, ok: string) =>
+    startTransition(async () => {
+      try {
+        await fn()
+        toast.success(ok)
+      } catch {
+        toast.error("Nie udało się")
+      }
+    })
   return (
     <div className="flex flex-wrap gap-2">
-      {options.map((next) => (
-        <Button
-          key={next}
-          size="sm"
-          variant={next === "odrzucona" ? "ghost" : "outline"}
-          disabled={pending}
-          onClick={() =>
-            startTransition(async () => {
-              await changeStatus(innovationId, next)
-              toast.success("Status: " + STATUS_LABEL[next])
-            })
-          }
-        >
-          {next === "odrzucona" ? "Odrzuć" : "→ " + STATUS_LABEL[next]}
+      {status !== "zweryfikowana" ? (
+        <Button size="sm" variant="outline" disabled={pending} onClick={() => run(() => changeStatus(innovationId, "zweryfikowana"), "Oznaczono jako zweryfikowaną")}>
+          Zweryfikowana
         </Button>
-      ))}
-      <Button
-        size="sm"
-        variant="ghost"
-        disabled={pending}
-        onClick={() =>
-          startTransition(async () => {
-            try {
-              await reanalyze(innovationId)
-              toast.success("Analiza odświeżona")
-            } catch {
-              toast.error("Nie udało się odświeżyć analizy")
-            }
-          })
-        }
-      >
-        {pending ? "Analizuję…" : "Odśwież analizę"}
+      ) : null}
+      {status !== "odrzucona" ? (
+        <Button size="sm" variant="ghost" disabled={pending} onClick={() => run(() => changeStatus(innovationId, "odrzucona"), "Odrzucono")}>
+          Odrzuć
+        </Button>
+      ) : (
+        <Button size="sm" variant="ghost" disabled={pending} onClick={() => run(() => changeStatus(innovationId, "nowa"), "Przywrócono")}>
+          Przywróć
+        </Button>
+      )}
+      <Button size="sm" variant="ghost" disabled={pending} onClick={() => run(() => reanalyze(innovationId), "Analiza odświeżona")}>
+        {pending ? "Pracuję…" : "Odśwież analizę"}
       </Button>
     </div>
   )

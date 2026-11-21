@@ -6,11 +6,11 @@ import { Suspense } from "react"
 import { cn } from "@/lib/utils"
 
 const LINKS = [
-  { href: "/innowacje", label: "Innowacje" },
-  { href: "/weryfikacja", label: "Do weryfikacji" },
-  { href: "/partnerzy", label: "Partnerzy" },
-  { href: "/mierniki", label: "Mierniki" },
-  { href: "/kryteria", label: "Kryteria" },
+  { href: "/innowacje", label: "Szukaj" },
+  { href: "/porownaj", label: "Porównaj" },
+  { href: "/weryfikacja", label: "Kolejka radaru" },
+  { href: "/mierniki", label: "Statystyki" },
+  { href: "/kryteria", label: "Metodologia" },
 ]
 
 export function NavLinks() {

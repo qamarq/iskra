@@ -9,14 +9,13 @@ import { PageHeader } from "@/components/page-header"
 import { SOURCE_LABEL, percent } from "@/lib/labels"
 import { listCandidates, listPendingDocuments } from "@/server/queries"
 
-export const metadata: Metadata = { title: "Do weryfikacji · ISKRA" }
+export const metadata: Metadata = { title: "Kolejka radaru · ISKRA" }
 
 export default function ReviewPage() {
   return (
     <main className="mx-auto w-full max-w-4xl px-5 py-10">
-      <PageHeader eyebrow="Radar" title="Kandydaci do weryfikacji">
-        Teksty ze stron instytucji, które model uznał za opis innowacji. Opiekun potwierdza albo odrzuca; dopiero potwierdzone trafiają do katalogu i są
-        oceniane.
+      <PageHeader eyebrow="Radar" title="Kolejka radaru">
+        Pewne trafienia radar dodaje sam. Tu trafiają teksty, przy których model nie jest pewny, czy opisują innowację: analityk decyduje jednym kliknięciem.
       </PageHeader>
       <Suspense fallback={<ListSkeleton />}>
         <Candidates />
@@ -70,7 +69,7 @@ async function Candidates() {
   await connection()
   const candidates = await listCandidates()
   if (!candidates.length) {
-    return <EmptyState title="Brak kandydatów">Radar nie znalazł nowych tekstów do sprawdzenia.</EmptyState>
+    return <EmptyState title="Brak kandydatów">Radar nie ma niepewnych trafień do sprawdzenia.</EmptyState>
   }
   return (
     <ul className="space-y-4">

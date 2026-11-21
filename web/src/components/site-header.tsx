@@ -12,8 +12,8 @@ export function SiteHeader() {
           <span className="font-heading text-lg font-semibold tracking-tight">ISKRA</span>
         </Link>
         <NavLinks />
-        <Link href="/zglos" className={buttonVariants({ size: "lg", className: "ml-auto px-4" })}>
-          Zgłoś innowację
+        <Link href="/analizuj" className={buttonVariants({ size: "lg", className: "ml-auto px-4" })}>
+          Przeanalizuj źródło
         </Link>
       </div>
     </header>

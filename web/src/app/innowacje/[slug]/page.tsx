@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { connection } from "next/server"
+import { after, connection } from "next/server"
 import { Suspense } from "react"
 import { InnovationView } from "@/components/innovation/innovation-view"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getInnovation } from "@/server/queries"
+import { getInnovation, recordView } from "@/server/queries"
 
 export const metadata: Metadata = { title: "Karta innowacji · ISKRA" }
 
@@ -20,6 +20,7 @@ async function InnovationDetail({ slug }: { slug: string }) {
   await connection()
   const data = await getInnovation(decodeURIComponent(slug))
   if (!data) notFound()
+  after(() => recordView(data.id))
   return <InnovationView data={data} />
 }
 

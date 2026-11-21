@@ -1,92 +1,145 @@
+import { format } from "date-fns"
+import { pl } from "date-fns/locale"
 import type { Metadata } from "next"
+import Link from "next/link"
 import { connection } from "next/server"
 import { Suspense } from "react"
 import { PageHeader } from "@/components/page-header"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { InstitutionType } from "@/lib/card"
-import { INNOVATION_STATUSES, type SourceKind } from "@/lib/domain"
-import { INSTITUTION_TYPE_LABEL, SOURCE_LABEL, STATUS_LABEL, TYPE_LABEL } from "@/lib/labels"
-import { funnelStats } from "@/server/queries"
+import type { ImplementationLevel, InnovationArea } from "@/lib/card"
+import type { Recommendation, SourceKind } from "@/lib/domain"
+import { AREA_LABEL, RECOMMENDATION_SHORT, REGION_LABEL, SOURCE_LABEL, STAGE_LABEL } from "@/lib/labels"
+import { radarStats } from "@/server/queries"
 
-export const metadata: Metadata = { title: "Mierniki · ISKRA" }
+export const metadata: Metadata = { title: "Statystyki radaru · ISKRA" }
 
-export default function MetricsPage() {
+export default function StatsPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10">
-      <PageHeader eyebrow="Skuteczność" title="Mierniki">
-        Ile innowacji radar znajduje, jak daleko przechodzą przez lejek i ile z nich trafia do partnerów. Liczone na bieżąco z historii zmian.
+      <PageHeader eyebrow="Statystyki" title="Co widzi radar">
+        Zawartość bazy, praca crawlera i anonimowe dane o tym, czego szukają użytkownicy (bez danych osobowych).
       </PageHeader>
       <Suspense fallback={<Skeleton className="h-[480px] rounded-3xl" />}>
-        <Metrics />
+        <Stats />
       </Suspense>
     </main>
   )
 }
 
-async function Metrics() {
+async function Stats() {
   await connection()
-  const s = await funnelStats()
-  const funnel = INNOVATION_STATUSES.filter((st) => st !== "odrzucona")
-  const reached = (index: number) => funnel.slice(index).reduce((sum, st) => sum + (s.byStatus[st] ?? 0), 0)
-  const total = reached(0)
-  const contacted = (s.matchesByStatus.wyslane ?? 0) + (s.matchesByStatus.zainteresowany ?? 0) + (s.matchesByStatus.odrzucone ?? 0)
-
+  const s = await radarStats()
+  const docsTotal = Object.values(s.documents).reduce((a, b) => a + b, 0)
   return (
     <div className="space-y-8">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Innowacje w bazie" value={total} />
-        <Stat label="Średni potencjał" value={s.avgScore != null ? Math.round(s.avgScore) + "/100" : "–"} />
-        <Stat label="Wykryte duplikaty" value={s.duplicates} hint="prace, których nie trzeba powtarzać" />
-        <Stat
-          label="Czas do rekomendacji"
-          value={s.avgHoursToRecommendation != null ? formatHours(s.avgHoursToRecommendation) : "–"}
-          hint="od wykrycia do wskazania ścieżki"
-        />
+        <Stat label="Innowacje w bazie" value={s.total} hint={s.recent + " nowych w ostatnim tygodniu"} />
+        <Stat label="Średni potencjał" value={s.avgPotential != null ? Math.round(s.avgPotential) + "/100" : "–"} />
+        <Stat label="Średnia wiarygodność" value={s.avgCredibility != null ? Math.round(s.avgCredibility) + "/100" : "–"} />
+        <Stat label="Scalone duplikaty" value={s.merged} hint="te same rozwiązania z kilku źródeł" />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <Breakdown title="Obszar" rows={s.byArea.map((r) => ({ label: AREA_LABEL[r.key as InnovationArea] ?? r.key, n: r.n }))} />
+        <Breakdown title="Poziom wdrożenia" sorted rows={s.byLevel.map((r) => ({ label: STAGE_LABEL[r.key as ImplementationLevel] ?? r.key, n: r.n }))} />
+        <Breakdown title="Rekomendacja" rows={s.byRecommendation.map((r) => ({ label: RECOMMENDATION_SHORT[r.key as Recommendation] ?? r.key ?? "brak", n: r.n }))} />
+        <Breakdown title="Gotowość technologii" sorted rows={s.byTrl.map((r) => ({ label: "TRL " + r.key, n: r.n }))} />
+        <Breakdown title="Region" rows={s.byRegion.map((r) => ({ label: REGION_LABEL[r.key] ?? r.key, n: r.n }))} />
+        <section className="rounded-3xl border border-border bg-card p-6">
+          <h3 className="font-heading text-lg font-semibold">Praca crawlera</h3>
+          <ul className="mt-4 space-y-1.5 text-sm">
+            <li className="flex justify-between">
+              <span>Przeczytane strony</span>
+              <b className="tabular-nums">{docsTotal}</b>
+            </li>
+            <li className="flex justify-between">
+              <span>Czekają na wykrywanie</span>
+              <b className="tabular-nums">{s.documents.nowy ?? 0}</b>
+            </li>
+            <li className="flex justify-between">
+              <span>Kandydaci do decyzji</span>
+              <b className="tabular-nums">{s.documents.kandydat ?? 0}</b>
+            </li>
+            <li className="flex justify-between">
+              <span>Odrzucone (nie innowacje)</span>
+              <b className="tabular-nums">{s.documents.odrzucony ?? 0}</b>
+            </li>
+            <li className="flex justify-between">
+              <span>Zamienione na karty</span>
+              <b className="tabular-nums">{s.documents.wyodrebniony ?? 0}</b>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <section className="rounded-3xl border border-border bg-card p-6">
+          <h3 className="font-heading text-lg font-semibold">Najczęstsze wyszukiwania (30 dni)</h3>
+          {s.topSearches.length ? (
+            <ul className="mt-4 space-y-2 text-sm">
+              {s.topSearches.map((q) => (
+                <li key={q.query} className="flex justify-between gap-3">
+                  <Link href={"/innowacje?q=" + encodeURIComponent(q.query)} className="truncate hover:text-primary">
+                    {q.query}
+                  </Link>
+                  <span className="shrink-0 text-muted-foreground tabular-nums">
+                    {q.n}× · śr. {Math.round(q.avgResults)} wyników
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-sm text-muted-foreground">Brak wyszukiwań.</p>
+          )}
+          <p className="mt-4 text-xs text-muted-foreground">Zapytania z małą liczbą wyników wskazują luki: tematy, których radar powinien szukać.</p>
+        </section>
+        <section className="rounded-3xl border border-border bg-card p-6">
+          <h3 className="font-heading text-lg font-semibold">Najczęściej oglądane karty (30 dni)</h3>
+          {s.topViewed.length ? (
+            <ul className="mt-4 space-y-2 text-sm">
+              {s.topViewed.map((v) => (
+                <li key={v.slug} className="flex justify-between gap-3">
+                  <Link href={"/innowacje/" + v.slug} className="truncate hover:text-primary">
+                    {v.title}
+                  </Link>
+                  <span className="shrink-0 text-muted-foreground tabular-nums">{v.n}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-4 text-sm text-muted-foreground">Brak odsłon.</p>
+          )}
+        </section>
       </div>
 
       <section className="rounded-3xl border border-border bg-card p-6">
-        <h2 className="font-heading text-xl font-semibold">Lejek</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Liczba innowacji, które dotarły co najmniej do danego etapu.</p>
-        <div className="mt-5 space-y-2.5">
-          {funnel.map((st, i) => {
-            const n = reached(i)
-            const width = total ? Math.max(2, (n / total) * 100) : 0
-            return (
-              <div key={st} className="grid grid-cols-[140px_1fr_60px] items-center gap-3 text-sm">
-                <span className="text-muted-foreground">{STATUS_LABEL[st]}</span>
-                <div className="h-7 rounded-lg bg-muted">
-                  <div className="h-full rounded-lg bg-primary" style={{ width: width + "%", opacity: 1 - i * 0.09 }} />
-                </div>
-                <span className="text-right font-semibold tabular-nums">{n}</span>
-              </div>
-            )
-          })}
+        <h3 className="font-heading text-lg font-semibold">Źródła i cykliczna aktualizacja</h3>
+        <p className="mt-1 text-sm text-muted-foreground">Radar odwiedza źródła cyklicznie i co tydzień sprawdza, czy opisy znanych innowacji się zmieniły.</p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-muted-foreground">
+                <th className="py-2 pr-4 font-medium">Źródło</th>
+                <th className="py-2 pr-4 font-medium">Rodzaj</th>
+                <th className="py-2 pr-4 font-medium">Dokumenty</th>
+                <th className="py-2 font-medium">Ostatnio</th>
+              </tr>
+            </thead>
+            <tbody>
+              {s.sources.map((src) => (
+                <tr key={src.id} className="border-t border-border">
+                  <td className="py-2 pr-4">{src.url ? <a href={src.url} target="_blank" rel="noreferrer" className="hover:text-primary">{src.name}</a> : src.name}</td>
+                  <td className="py-2 pr-4 text-muted-foreground">{SOURCE_LABEL[src.kind as SourceKind] ?? src.kind}</td>
+                  <td className="py-2 pr-4 tabular-nums">{src.documents}</td>
+                  <td className="py-2 text-muted-foreground">{src.lastRunAt ? format(src.lastRunAt, "d MMM yyyy, HH:mm", { locale: pl }) : "–"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <p className="mt-4 text-sm text-muted-foreground">Odrzucone: {s.byStatus.odrzucona ?? 0}</p>
       </section>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        <Breakdown title="Typ innowacji" rows={s.byType.map((r) => ({ label: TYPE_LABEL[r.type], n: r.n }))} />
-        <Breakdown
-          title="Typ instytucji"
-          rows={s.byInstitutionType.map((r) => ({ label: INSTITUTION_TYPE_LABEL[r.type as InstitutionType], n: r.n }))}
-        />
-        <Breakdown title="Źródło" rows={s.bySource.map((r) => ({ label: SOURCE_LABEL[r.kind as SourceKind] ?? r.kind, n: r.n }))} />
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Dokumenty przeczytane przez radar" value={Object.values(s.documents).reduce((a, b) => a + b, 0)} />
-        <Stat label="Kandydaci czekający na weryfikację" value={s.documents.kandydat ?? 0} />
-        <Stat label="Kontakty z partnerami" value={contacted} hint={(s.matchesByStatus.zainteresowany ?? 0) + " partnerów zainteresowanych"} />
-      </div>
     </div>
   )
-}
-
-function formatHours(hours: number) {
-  if (hours < 1) return Math.max(1, Math.round(hours * 60)) + " min"
-  if (hours < 48) return Math.round(hours) + " h"
-  return Math.round(hours / 24) + " dni"
 }
 
 function Stat({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) {
@@ -99,26 +152,25 @@ function Stat({ label, value, hint }: { label: string; value: React.ReactNode; h
   )
 }
 
-function Breakdown({ title, rows }: { title: string; rows: { label: string; n: number }[] }) {
+function Breakdown({ title, rows, sorted }: { title: string; rows: { label: string; n: number }[]; sorted?: boolean }) {
   const max = Math.max(1, ...rows.map((r) => r.n))
+  const list = sorted ? rows : [...rows].sort((a, b) => b.n - a.n)
   return (
     <section className="rounded-3xl border border-border bg-card p-6">
       <h3 className="font-heading text-lg font-semibold">{title}</h3>
       <ul className="mt-4 space-y-2.5">
-        {rows.length ? (
-          rows
-            .sort((a, b) => b.n - a.n)
-            .map((r) => (
-              <li key={r.label} className="text-sm">
-                <div className="flex justify-between">
-                  <span>{r.label}</span>
-                  <span className="font-semibold tabular-nums">{r.n}</span>
-                </div>
-                <div className="mt-1 h-1.5 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-glow" style={{ width: (r.n / max) * 100 + "%" }} />
-                </div>
-              </li>
-            ))
+        {list.length ? (
+          list.map((r) => (
+            <li key={r.label} className="text-sm">
+              <div className="flex justify-between">
+                <span>{r.label}</span>
+                <span className="font-semibold tabular-nums">{r.n}</span>
+              </div>
+              <div className="mt-1 h-1.5 rounded-full bg-muted">
+                <div className="h-full rounded-full bg-glow" style={{ width: (r.n / max) * 100 + "%" }} />
+              </div>
+            </li>
+          ))
         ) : (
           <li className="text-sm text-muted-foreground">Brak danych</li>
         )}

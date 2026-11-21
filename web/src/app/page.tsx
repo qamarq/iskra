@@ -5,38 +5,43 @@ import { Suspense } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
 import { ListSkeleton } from "@/components/list-skeleton"
+import { SearchBox } from "@/components/search-box"
 import { SparkMark } from "@/components/spark-mark"
-import { buttonVariants } from "@/components/ui/button"
-import { listInnovations } from "@/server/queries"
+import { INNOVATION_AREAS, TARGET_GROUPS } from "@/lib/card"
+import { AREA_LABEL, TARGET_GROUP_LABEL } from "@/lib/labels"
+import { searchInnovations } from "@/server/queries"
+
+const EXAMPLES = ["skrócenie kolejek w urzędzie", "nauka programowania w szkole podstawowej", "recykling plastiku w budownictwie", "wykrywanie dronów"]
 
 const STEPS = [
-  { letter: "I", title: "Identyfikacja", text: "Radar czyta strony szkół, uczelni i samorządów, a instytucje mogą zgłaszać pomysły same." },
-  { letter: "S", title: "Selekcja", text: "Karta innowacji z cytatami ze źródła i ocena według sześciu jawnych kryteriów." },
-  { letter: "K", title: "Kojarzenie", text: "Podobne rozwiązania w innych instytucjach i partnerzy dobrani do ścieżki rozwoju." },
-  { letter: "R", title: "Rozwój", text: "Konkretna ścieżka: transfer, pilotaż, prototyp w ProtoLab, finansowanie albo komercjalizacja." },
-  { letter: "A", title: "Adaptacja", text: "Każdy krok jest zapisywany, więc widać, które pomysły naprawdę trafiły gdzie indziej." },
+  { letter: "I", title: "Identyfikacja", text: "Radar cyklicznie czyta strony uczelni, samorządów i szkół oraz bazy publikacji." },
+  { letter: "S", title: "Selekcja", text: "Definicja innowacji z Oslo Manual; karta z cytatami, fakty oddzielone od szacunków." },
+  { letter: "K", title: "Kojarzenie", text: "Podobne rozwiązania, publikacje i miejsca, w których można je zastosować." },
+  { letter: "R", title: "Rozwój", text: "Poziom wdrożenia, TRL, innowacyjność, potencjał i wiarygodność w jednej karcie." },
+  { letter: "A", title: "Adaptacja", text: "Wyszukiwanie po potrzebach i porównywanie skraca drogę do gotowego rozwiązania." },
 ]
 
 export default function Home() {
   return (
     <main className="flex-1">
-      <section className="mx-auto grid w-full max-w-6xl gap-10 px-5 pt-16 pb-12 md:grid-cols-[1.2fr_1fr] md:items-center md:pt-24">
+      <section className="mx-auto grid w-full max-w-6xl gap-10 px-5 pt-14 pb-10 md:grid-cols-[1.4fr_1fr] md:items-center md:pt-20">
         <div className="space-y-6">
-          <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">Radar innowacji · Podkarpacie</p>
-          <h1 className="font-heading text-4xl leading-[1.05] font-semibold tracking-tight md:text-6xl">
-            Dobre pomysły nie powinny gasnąć tam, gdzie powstały.
+          <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">Radar polskich innowacji</p>
+          <h1 className="font-heading text-4xl leading-[1.05] font-semibold tracking-tight md:text-5xl">
+            Zanim zaczniesz od zera, sprawdź, kto już to rozwiązał.
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground">
-            ISKRA wyłapuje innowacje ze szkół, uczelni i samorządów, ocenia ich potencjał według jawnych kryteriów i łączy twórców z tymi, którzy mogą je
-            przejąć, rozwinąć albo sfinansować.
+            ISKRA odnajduje istniejące innowacje technologiczne, edukacyjne i administracyjne w polskich uczelniach, szkołach i samorządach, sprawdza ich
+            rzeczywisty poziom rozwoju i pokazuje, gdzie mogą się przydać.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/zglos" className={buttonVariants({ size: "lg", className: "h-11 px-5" })}>
-              Zgłoś innowację
-            </Link>
-            <Link href="/innowacje" className={buttonVariants({ size: "lg", variant: "outline", className: "h-11 px-5" })}>
-              Przeglądaj katalog
-            </Link>
+          <SearchBox large />
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Na przykład:</span>
+            {EXAMPLES.map((e) => (
+              <Link key={e} href={"/innowacje?q=" + encodeURIComponent(e)} className="rounded-full border border-border bg-card px-3 py-1 hover:border-primary/50">
+                {e}
+              </Link>
+            ))}
           </div>
         </div>
         <div className="relative hidden aspect-square md:block">
@@ -52,7 +57,44 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-5 pb-16">
+      <section className="mx-auto w-full max-w-6xl px-5 pb-12">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-3xl border border-border bg-card p-6">
+            <h2 className="font-heading text-lg font-semibold">Szukasz jako…</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {TARGET_GROUPS.map((g) => (
+                <Link key={g} href={"/innowacje?dla=" + g} className="rounded-full border border-border px-3 py-1.5 text-sm hover:border-primary/50 hover:text-primary">
+                  {TARGET_GROUP_LABEL[g]}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-3xl border border-border bg-card p-6">
+            <h2 className="font-heading text-lg font-semibold">Obszary</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {INNOVATION_AREAS.map((a) => (
+                <Link key={a} href={"/innowacje?obszar=" + a} className="rounded-full border border-border px-3 py-1.5 text-sm hover:border-primary/50 hover:text-primary">
+                  {AREA_LABEL[a]}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 pb-12">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <h2 className="font-heading text-2xl font-semibold">Najwyżej ocenione</h2>
+          <Link href="/innowacje" className="flex items-center gap-1 text-sm font-medium text-primary hover:underline">
+            Wszystkie <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <Suspense fallback={<ListSkeleton rows={4} />}>
+          <Top />
+        </Suspense>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 pb-24">
         <ol className="grid gap-3 md:grid-cols-5">
           {STEPS.map((s) => (
             <li key={s.letter} className="rounded-2xl border border-border bg-card p-5">
@@ -63,35 +105,23 @@ export default function Home() {
           ))}
         </ol>
       </section>
-
-      <section className="mx-auto w-full max-w-6xl px-5 pb-24">
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 className="font-heading text-2xl font-semibold">Najwyżej ocenione</h2>
-          <Link href="/innowacje" className="flex items-center gap-1 text-sm font-medium text-primary hover:underline">
-            Wszystkie <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <Suspense fallback={<ListSkeleton rows={4} />}>
-          <TopInnovations />
-        </Suspense>
-      </section>
     </main>
   )
 }
 
-async function TopInnovations() {
+async function Top() {
   await connection()
-  const items = (await listInnovations()).slice(0, 6)
-  if (!items.length) {
+  const { rows } = await searchInnovations({}, { limit: 6 })
+  if (!rows.length) {
     return (
-      <EmptyState title="Baza jest jeszcze pusta" href="/zglos" cta="Zgłoś pierwszą innowację">
-        Zgłoś innowację albo zaimportuj dane startowe.
+      <EmptyState title="Radar jeszcze nic nie znalazł" href="/weryfikacja" cta="Zobacz kolejkę radaru">
+        Uruchom crawler albo zaimportuj dane startowe.
       </EmptyState>
     )
   }
   return (
     <div className="grid gap-3 md:grid-cols-2">
-      {items.map((item) => (
+      {rows.map((item) => (
         <InnovationListItemCard key={item.id} item={item} />
       ))}
     </div>

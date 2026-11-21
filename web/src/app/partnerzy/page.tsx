@@ -8,13 +8,13 @@ import { PageHeader } from "@/components/page-header"
 import { PARTNER_KIND_LABEL } from "@/lib/labels"
 import { listPartners } from "@/server/queries"
 
-export const metadata: Metadata = { title: "Partnerzy · ISKRA" }
+export const metadata: Metadata = { title: "Odbiorcy · ISKRA" }
 
 export default function PartnersPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-5 py-10">
-      <PageHeader eyebrow="Sieć" title="Partnerzy">
-        Instytucje, firmy, inwestorzy i programy, z którymi ISKRA łączy twórców innowacji.
+      <PageHeader eyebrow="Odbiorcy" title="Kto może skorzystać">
+        Instytucje, firmy i centra transferu technologii, które radar wskazuje jako potencjalnych użytkowników znalezionych rozwiązań.
       </PageHeader>
       <Suspense fallback={<ListSkeleton rows={6} />}>
         <Partners />
@@ -26,7 +26,7 @@ export default function PartnersPage() {
 async function Partners() {
   await connection()
   const partners = await listPartners()
-  if (!partners.length) return <EmptyState title="Brak partnerów">Baza partnerów jest pusta. Uruchom import danych startowych.</EmptyState>
+  if (!partners.length) return <EmptyState title="Brak odbiorców">Baza jest pusta. Uruchom import danych startowych.</EmptyState>
   return (
     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       {partners.map((p) => (

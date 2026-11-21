@@ -1,64 +1,68 @@
 import type { Metadata } from "next"
 import { PageHeader } from "@/components/page-header"
 import { CRITERIA_INFO } from "@/lib/criteria"
-import { DETECTION_THRESHOLD, DUPLICATE_THRESHOLD, SIMILAR_THRESHOLD } from "@/lib/domain"
-import { PATHWAY_LABEL } from "@/lib/labels"
+import { AUTO_PROMOTE_THRESHOLD, DETECTION_THRESHOLD, DUPLICATE_THRESHOLD, SIMILAR_THRESHOLD } from "@/lib/domain"
+import { RECOMMENDATION_LABEL } from "@/lib/labels"
 
-export const metadata: Metadata = { title: "Jak oceniamy · ISKRA" }
+export const metadata: Metadata = { title: "Metodologia · ISKRA" }
 
-const PATHWAY_RULES = [
-  { pathway: "komercjalizacja", rule: "Innowacja technologiczna, nowość ≥ 4/5 i TRL ≥ 4 albo rozwiązanie już działające." },
-  { pathway: "prototypowanie", rule: "Etap pomysłu lub prototypu albo technologia na TRL 1–4." },
-  { pathway: "transfer", rule: "Rozwiązanie działa na co dzień, a przenaszalność ≥ 4/5." },
-  { pathway: "pilotaz", rule: "Etap pilotażu albo wdrożenie bez zmierzonych efektów (efekty ≤ 2/5)." },
-  { pathway: "finansowanie", rule: "Wysoki koszt wdrożenia (koszt ≤ 2/5) albo ważny problem (≥ 4/5) na wczesnym etapie." },
-  { pathway: "uzupelnienie", rule: "Pewność oceny poniżej 45%: najpierw trzeba uzupełnić informacje." },
+const RULES = [
+  { r: "weryfikacja", rule: "Wiarygodność poniżej 40/100: zanim ktoś oprze na tym decyzję, trzeba potwierdzić informacje." },
+  { r: "licencja", rule: "Rozwiązanie ma patent lub zgłoszenie (polskie IP) i jest co najmniej na etapie prototypu." },
+  { r: "wdrozenie", rule: "Stosowane w praktyce, potencjał zastosowania co najmniej 3/5." },
+  { r: "pilotaz", rule: "Etap testów albo wdrożenia pilotażowego." },
+  { r: "rozwoj", rule: "Etap koncepcji albo prototypu." },
 ] as const
 
-export default function CriteriaPage() {
+const CREDIBILITY = [
+  { label: "Fakty potwierdzone cytatem", weight: 40, text: "Udział kluczowych informacji (problem, rozwiązanie, status wdrożenia, efekty, nowość, IP, TRL), których cytat program odnalazł w tekście źródła." },
+  { label: "Rodzaj źródła", weight: 25, text: "Bazy patentowe i projektowe (UPRP, EPO, CORDIS, NCBR) > publikacje (OpenAlex) > oficjalne strony instytucji > pojedyncze linki." },
+  { label: "Dokumentacja i potwierdzenia", weight: 20, text: "Patent, publikacja, projekt finansowany, raport, dane z wdrożenia (pełna waga), nagroda i media (połowa wagi)." },
+  { label: "Niezależne źródła", weight: 15, text: "Każde kolejne źródło opisujące to samo rozwiązanie podnosi wiarygodność (do trzech)." },
+]
+
+export default function MethodologyPage() {
   return (
     <main className="mx-auto w-full max-w-4xl px-5 py-10">
-      <PageHeader eyebrow="Metodologia" title="Jak ISKRA wykrywa, ocenia i rekomenduje">
-        Wszystkie kryteria, progi i reguły są jawne. Model językowy pomaga czytać teksty i proponuje oceny, ale każdą ocenę uzasadnia cytatem, a opiekun może
-        ją poprawić. Ścieżka rozwoju wynika z reguł, nie z „czarnej skrzynki”.
+      <PageHeader eyebrow="Metodologia" title="Jak ISKRA znajduje i ocenia innowacje">
+        Wszystkie definicje, progi i reguły są jawne. Model językowy czyta teksty, ale fakty muszą mieć cytat odnaleziony w źródle, wiarygodność liczy program,
+        a rekomendację wybierają reguły.
       </PageHeader>
 
-      <section className="space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">1. Wykrywanie</h2>
-        <p className="text-muted-foreground">
-          Radar czyta teksty publikowane przez szkoły, uczelnie i samorządy oraz zgłoszenia. Model ocenia, czy tekst opisuje konkretne rozwiązanie wdrożone
-          lub testowane w instytucji. Teksty z pewnością co najmniej {Math.round(DETECTION_THRESHOLD * 100)}% trafiają do kolejki „Do weryfikacji”, gdzie
-          decyduje człowiek.
+      <Block title="1. Co jest innowacją">
+        <p>
+          Punkt odniesienia to podręcznik OECD/Eurostat <b>Oslo Manual 2018</b>: innowacja to nowe lub ulepszone rozwiązanie, które znacząco różni się od
+          dotychczasowych i zostało udostępnione użytkownikom lub wdrożone w praktyce. Radar obejmuje trzy obszary: <b>technologiczny</b>, <b>edukacyjny</b> i{" "}
+          <b>administracyjny</b>, oraz rozpoznaje charakter rozwiązania (produkt, usługa, proces, metoda, organizacja).
         </p>
-      </section>
+      </Block>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">2. Karta innowacji</h2>
-        <p className="text-muted-foreground">
-          Z tekstu powstaje karta: problem, rozwiązanie, odbiorcy, dojrzałość, efekty, koszty i twórcy. Każde pole ma dosłowny cytat ze źródła. Jeśli źródło o
-          czymś nie mówi, pole jest oznaczone jako „brak danych”, co obniża pewność oceny, ale nie samą ocenę.
+      <Block title="2. Wyszukiwanie i aktualizacja">
+        <p>
+          Crawler cyklicznie czyta strony aktualności uczelni, samorządów i szkół (z poszanowaniem robots.txt), a publikacje naukowe pobiera z otwartego API
+          OpenAlex. Model ocenia, czy tekst opisuje innowację: od {Math.round(AUTO_PROMOTE_THRESHOLD * 100)}% pewności karta powstaje automatycznie, od{" "}
+          {Math.round(DETECTION_THRESHOLD * 100)}% tekst trafia do kolejki radaru, gdzie decyduje analityk. Co tydzień radar sprawdza, czy źródła znanych
+          innowacji się zmieniły, i odświeża ocenę.
         </p>
-      </section>
+      </Block>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">3. Podobne rozwiązania</h2>
-        <p className="text-muted-foreground">
-          Opis problemu i rozwiązania zamieniamy na wektor znaczeniowy i porównujemy z bazą. Podobieństwo od {Math.round(SIMILAR_THRESHOLD * 100)}% oznacza
-          podobne rozwiązanie w innej instytucji (szansa na współpracę), a od {Math.round(DUPLICATE_THRESHOLD * 100)}% prawdopodobny duplikat.
+      <Block title="3. Fakty i szacunki">
+        <p>
+          Każda informacja w karcie ma jeden z trzech statusów: <b>potwierdzone</b> (program odnalazł cytat w tekście źródła), <b>szacunek</b> (wniosek modelu
+          bez potwierdzenia w tekście) albo <b>brak danych</b>. Pole „Gdzie można zastosować” jest zawsze szacunkiem.
         </p>
-      </section>
+      </Block>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">4. Ocena potencjału</h2>
-        <p className="text-muted-foreground">
-          Sześć kryteriów w skali 0–5. Wynik 0–100 to średnia ważona. Pewność łączy pewność modelu i kompletność karty (ile pól ma cytat ze źródła).
-        </p>
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+      <Block title="4. Potencjał (0–100)">
+        <p>Średnia ważona czterech kryteriów w skali 1–5. Dla rozwiązań nietechnologicznych TRL nie jest liczony, a wagi pozostałych kryteriów rosną proporcjonalnie.</p>
+        <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
           {CRITERIA_INFO.map((c) => (
-            <div key={c.id} className="grid gap-3 border-b border-border p-5 last:border-b-0 md:grid-cols-[200px_1fr]">
+            <div key={c.id} className="grid gap-3 border-b border-border p-5 last:border-b-0 md:grid-cols-[210px_1fr]">
               <div>
                 <p className="font-heading font-semibold">{c.label}</p>
-                <p className="text-sm text-primary">waga {Math.round(c.weight * 100)}%</p>
+                <p className="text-sm text-primary">
+                  waga {Math.round(c.weight * 100)}% · {c.method === "karta" ? "z karty" : "ocena modelu"}
+                </p>
               </div>
               <div className="space-y-2 text-sm">
                 <p>{c.question}</p>
@@ -77,37 +81,57 @@ export default function CriteriaPage() {
             </div>
           ))}
         </div>
-      </section>
+      </Block>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">5. Ścieżka rozwoju</h2>
-        <p className="text-muted-foreground">Reguły sprawdzane po kolei; pierwsza spełniona to ścieżka główna, kolejne to ścieżki dodatkowe.</p>
-        <ul className="space-y-2">
-          {PATHWAY_RULES.map((r) => (
-            <li key={r.pathway} className="rounded-xl border border-border bg-card p-4 text-sm">
-              <p className="font-medium">{PATHWAY_LABEL[r.pathway]}</p>
+      <Block title="5. Wiarygodność (0–100)">
+        <p>Liczona przez program, bez udziału modelu:</p>
+        <ul className="mt-3 space-y-2">
+          {CREDIBILITY.map((c) => (
+            <li key={c.label} className="rounded-xl border border-border bg-card p-4 text-sm">
+              <p className="font-medium">
+                {c.label} <span className="text-primary">· {c.weight}%</span>
+              </p>
+              <p className="text-muted-foreground">{c.text}</p>
+            </li>
+          ))}
+        </ul>
+      </Block>
+
+      <Block title="6. Podobne rozwiązania i duplikaty">
+        <p>
+          Opis problemu i rozwiązania zamieniamy na wektor znaczeniowy. Od {Math.round(SIMILAR_THRESHOLD * 100)}% podobieństwa pokazujemy rozwiązanie jako
+          podobne; od {Math.round(DUPLICATE_THRESHOLD * 100)}% nowe źródło dołączamy do istniejącej karty zamiast tworzyć duplikat.
+        </p>
+      </Block>
+
+      <Block title="7. Rekomendacja">
+        <p>Reguły sprawdzane po kolei; pierwsza spełniona to rekomendacja główna.</p>
+        <ul className="mt-3 space-y-2">
+          {RULES.map((r) => (
+            <li key={r.r} className="rounded-xl border border-border bg-card p-4 text-sm">
+              <p className="font-medium">{RECOMMENDATION_LABEL[r.r]}</p>
               <p className="text-muted-foreground">{r.rule}</p>
             </li>
           ))}
         </ul>
-      </section>
+      </Block>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">6. Dopasowanie partnerów</h2>
-        <p className="text-muted-foreground">
-          Wynik dopasowania = 55% podobieństwa profilu partnera do innowacji + 25% zgodności typu partnera ze ścieżką (np. inwestor przy komercjalizacji,
-          samorząd przy transferze) + 15% wspólnych tematów + 5% za region. Do każdego partnera model pisze jedno zdanie uzasadnienia i szkic wiadomości.
-        </p>
-      </section>
-
-      <section className="mt-10 space-y-4">
-        <h2 className="font-heading text-2xl font-semibold">Ograniczenia</h2>
-        <ul className="list-disc space-y-1.5 pl-5 text-muted-foreground">
-          <li>Ocena jest tak dobra, jak źródło: krótkie ogłoszenia dają niską pewność.</li>
-          <li>Model może się pomylić, dlatego każda ocena ma cytat i może zostać poprawiona przez opiekuna.</li>
-          <li>Wyszukiwanie podobnych obejmuje bazę ISKRA; porównanie z patentami i publikacjami jest rozwijane.</li>
+      <Block title="Ograniczenia">
+        <ul className="list-disc space-y-1.5 pl-5">
+          <li>Radar widzi tylko to, co zostało opublikowane; ocena jest tak dobra, jak źródło.</li>
+          <li>Model może się pomylić: dlatego fakty wymagają cytatu, a analityk może poprawić ocenę.</li>
+          <li>Bazy patentowe (UPRP, EPO) i projektowe (NCBR, CORDIS) są w planie jako kolejne źródła.</li>
         </ul>
-      </section>
+      </Block>
     </main>
+  )
+}
+
+function Block({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-10 space-y-3 first-of-type:mt-0">
+      <h2 className="font-heading text-2xl font-semibold">{title}</h2>
+      <div className="text-muted-foreground">{children}</div>
+    </section>
   )
 }

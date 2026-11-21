@@ -21,9 +21,9 @@ export function CriterionOverride({ innovationId, criterion, current }: { innova
   }
 
   return (
-    <div className="mt-3 space-y-2 rounded-xl border border-border bg-muted/50 p-3">
+    <div className="mt-3 w-full space-y-2 rounded-xl border border-border bg-muted/50 p-3">
       <div className="flex items-center gap-1">
-        {[0, 1, 2, 3, 4, 5].map((n) => (
+        {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}
             type="button"
@@ -51,7 +51,7 @@ export function CriterionOverride({ innovationId, criterion, current }: { innova
           onClick={() =>
             startTransition(async () => {
               await overrideCriterion(innovationId, criterion, score, rationale)
-              toast.success("Ocena zapisana, wynik i ścieżka przeliczone")
+              toast.success("Ocena zapisana, potencjał i rekomendacja przeliczone")
               setOpen(false)
             })
           }
