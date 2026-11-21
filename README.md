@@ -4,6 +4,8 @@
 
 ISKRA odnajduje istniejące innowacje technologiczne, edukacyjne i administracyjne powstające w polskich uczelniach, szkołach i samorządach, sprawdza ich rzeczywisty poziom rozwoju i wiarygodność oraz pokazuje, gdzie mogą znaleźć zastosowanie. Jedno miejsce, w którym można wyszukać rozwiązanie po potrzebie, porównać kandydatów i od razu zobaczyć, co jest potwierdzone w źródłach, a co jest szacunkiem.
 
+**Działająca wersja:** https://iskra.51.75.202.226.sslip.io · scraper pracuje w tle 24/7 (co godzinę przechodzi wszystkie źródła).
+
 Zadanie: Podkarpackie Centrum Innowacji, „Radar innowacji”, HackNation 2026 (z doprecyzowaniem z [FAQ](docs/Radar%20Innowacji%20FAQ.pdf)).
 
 ISKRA nie jest platformą zgłoszeń, portalem społecznościowym ani narzędziem do pozyskiwania finansowania: służy do odkrywania i oceny rozwiązań, które już istnieją.
