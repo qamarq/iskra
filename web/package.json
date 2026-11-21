@@ -12,7 +12,8 @@
     "db:studio": "drizzle-kit studio",
     "typecheck": "next typegen && tsc --noEmit",
     "db:seed": "tsx --conditions=react-server scripts/seed.ts",
-    "crawl": "tsx --conditions=react-server scripts/crawl.ts"
+    "crawl": "tsx --conditions=react-server scripts/crawl.ts",
+    "db:backfill": "tsx --conditions=react-server scripts/backfill.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.12.0",
