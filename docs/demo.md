@@ -1,5 +1,7 @@
 # Scenariusz demo (film ≤ 3 min)
 
+Przed nagraniem: `cd web && pnpm demo:reset` usuwa karty obu przypadków demo, żeby analiza przeszła na żywo od początku.
+
 Scenariusz z treści zadania: a) wykrycie, b) uporządkowanie informacji, c) ocena według kryteriów, d) odbiorcy i zastosowanie, e) uzasadnienie i mierniki. Dwa przypadki użycia, oba prawdziwe. `pnpm db:seed` pomija je celowo (`"demo": true` w `web/seed/seed.json`).
 
 ## 0. Problem (15 s)

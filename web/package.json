@@ -13,7 +13,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:seed": "tsx --conditions=react-server scripts/seed.ts",
     "crawl": "tsx --conditions=react-server scripts/crawl.ts",
-    "db:backfill": "tsx --conditions=react-server scripts/backfill.ts"
+    "db:backfill": "tsx --conditions=react-server scripts/backfill.ts",
+    "demo:reset": "tsx --conditions=react-server scripts/demo-reset.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.12.0",
