@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>ISKRA: radar polskich innowacji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1920px 1080px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg: #FAF6F1; --ink: #1D1A2B; --soft: #5E5868; --ember: #E4572E; --glow: #F2A541; --line: #E8DFD4; --card: #fff; --green: #2E9E7E; }
+  body { font-family: Figtree, sans-serif; color: var(--ink); background: var(--bg); }
+  .s { width: 1920px; height: 1080px; padding: 96px 120px; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+  .s.dark { background: var(--ink); color: #fff; }
+  .eyebrow { font-size: 22px; letter-spacing: .16em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+  h1 { font-family: Sora, sans-serif; font-size: 104px; line-height: 1.02; letter-spacing: -0.02em; font-weight: 600; }
+  h2 { font-family: Sora, sans-serif; font-size: 64px; line-height: 1.08; letter-spacing: -0.015em; font-weight: 600; margin-top: 18px; }
+  p.lead { font-size: 34px; line-height: 1.4; color: var(--soft); margin-top: 28px; max-width: 1300px; }
+  .dark p.lead { color: rgba(255,255,255,.75); }
+  .grid { display: grid; gap: 28px; margin-top: 56px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 28px; padding: 36px; }
+  .card h3 { font-family: Sora, sans-serif; font-size: 32px; font-weight: 600; }
+  .card p { font-size: 24px; line-height: 1.45; color: var(--soft); margin-top: 12px; }
+  .big { font-family: Sora, sans-serif; font-size: 88px; font-weight: 700; color: var(--ember); line-height: 1; }
+  .foot { position: absolute; bottom: 48px; left: 120px; right: 120px; display: flex; justify-content: space-between; font-size: 20px; color: var(--soft); }
+  .dark .foot { color: rgba(255,255,255,.5); }
+  .shot { border-radius: 24px; border: 1px solid var(--line); box-shadow: 0 40px 80px -40px rgba(29,26,43,.35); width: 100%; object-fit: cover; object-position: top; }
+  .row { display: flex; gap: 56px; align-items: flex-start; }
+  .pill { display: inline-block; border-radius: 999px; padding: 6px 18px; font-size: 22px; font-weight: 600; }
+  .ok { background: #E3F4EE; color: #1F7A5F; } .est { background: #FFF6DF; color: #7A5304; } .none { background: #F2ECE4; color: var(--soft); }
+  .flow { display: flex; gap: 14px; margin-top: 64px; align-items: stretch; }
+  .flow .step { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px 22px; }
+  .flow .step b { font-family: Sora, sans-serif; font-size: 26px; display: block; }
+  .flow .step span { font-size: 20px; color: var(--soft); line-height: 1.4; display: block; margin-top: 10px; }
+  .flow .arrow { align-self: center; color: var(--ember); font-size: 36px; }
+  table { border-collapse: collapse; width: 100%; font-size: 26px; margin-top: 48px; }
+  td, th { text-align: left; padding: 18px 20px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--soft); font-weight: 500; font-size: 22px; }
+  .spark { width: 120px; height: 120px; }
+</style>
+</head>
+<body>
+
+<section class="s">
+  <svg class="spark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#FFE9DD"/><path d="M16 4 L18.6 13.4 L28 16 L18.6 18.6 L16 28 L13.4 18.6 L4 16 L13.4 13.4 Z" fill="#E4572E"/><circle cx="16" cy="16" r="2.6" fill="#F2A541"/></svg>
+  <div style="margin-top: 56px" class="eyebrow">Radar innowacji · Podkarpackie Centrum Innowacji · HackNation 2026</div>
+  <h1 style="margin-top: 28px">ISKRA</h1>
+  <h2 style="font-weight: 500; color: var(--soft)">Zanim zaczniesz od zera,<br>sprawdź, kto już to rozwiązał.</h2>
+  <p class="lead">Radar, który sam odnajduje istniejące polskie innowacje technologiczne, edukacyjne i administracyjne, sprawdza ich rzeczywisty poziom rozwoju i pokazuje, gdzie mogą się przydać.</p>
+  <div class="foot"><span>Identyfikacja · Selekcja · Kojarzenie · Rozwój · Adaptacja</span><span>{{DEMO_URL}}</span></div>
+</section>
+
+<section class="s">
+  <div class="eyebrow">Problem</div>
+  <h2>Innowacje powstają wszędzie,<br>ale nikt ich nie zbiera.</h2>
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="card"><div class="big" style="font-size: 60px">Rozproszenie</div><p>Patent uczelni, pilotaż w gminie, nowa metoda w szkole: każde w innych aktualnościach, BIP-ie albo komunikacie prasowym.</p></div>
+    <div class="card"><div class="big" style="font-size: 60px">Dublowanie</div><p>Dwie gminy budują tę samą e-usługę, dwie uczelnie ten sam czujnik, bo nie wiedzą o sobie nawzajem.</p></div>
+    <div class="card"><div class="big" style="font-size: 60px">Niepewność</div><p>Z komunikatu nie wiadomo, czy to koncepcja, czy działające wdrożenie, i ile w nim faktów, a ile marketingu.</p></div>
+  </div>
+</section>
+
+<section class="s">
+  <div class="eyebrow">Jak to działa</div>
+  <h2>Od tekstu na stronie uczelni do oceny i rekomendacji.</h2>
+  <div class="flow">
+    <div class="step"><b>Źródła</b><span>Crawler stron uczelni, samorządów i szkół (robots.txt), link od analityka, OpenAlex</span></div><div class="arrow">→</div>
+    <div class="step"><b>Wykrycie</b><span>Definicja z Oslo Manual 2018; pewne trafienia trafiają do bazy same, niepewne do kolejki</span></div><div class="arrow">→</div>
+    <div class="step"><b>Karta</b><span>Obszar, charakter, etap, TRL, efekty, IP; każdy fakt z cytatem</span></div><div class="arrow">→</div>
+    <div class="step"><b>Kontekst</b><span>Podobne rozwiązania (wektory), publikacje, scalanie duplikatów</span></div><div class="arrow">→</div>
+    <div class="step"><b>Ocena</b><span>Potencjał 0–100 i wiarygodność 0–100</span></div><div class="arrow">→</div>
+    <div class="step"><b>Rekomendacja</b><span>Licencja, zastosowanie, pilotaż, rozwój; gdzie użyć</span></div>
+  </div>
+  <p class="lead" style="margin-top: 56px">Cyklicznie: nowe artykuły co dzień, ponowne sprawdzenie źródeł znanych innowacji co tydzień. Zmiana w źródle = nowa ocena.</p>
+</section>
+
+<section class="s">
+  <div class="row" style="height: 100%">
+    <div style="flex: 0 0 640px">
+      <div class="eyebrow">Karta innowacji</div>
+      <h2>Fakty oddzielone od szacunków.</h2>
+      <p class="lead" style="font-size: 30px">Model wypełnia kartę, ale to program sprawdza, czy cytat naprawdę jest w źródle.</p>
+      <div style="margin-top: 40px; display: grid; gap: 18px; font-size: 26px">
+        <div><span class="pill ok">potwierdzone</span> cytat odnaleziony w tekście</div>
+        <div><span class="pill est">szacunek</span> wniosek modelu</div>
+        <div><span class="pill none">brak danych</span> źródło o tym nie mówi</div>
+      </div>
+    </div>
+    <img class="shot" style="height: 880px" src="img/card.png">
+  </div>
+</section>
+
+<section class="s">
+  <div class="eyebrow">Ocena według kryteriów z FAQ</div>
+  <h2>Przejrzyste liczby zamiast czarnej skrzynki.</h2>
+  <table>
+    <tr><th>Kryterium</th><th>Skąd</th><th>Waga</th></tr>
+    <tr><td><b>Poziom wdrożenia</b> (koncepcja → stosowane)</td><td>wprost z karty</td><td>25%</td></tr>
+    <tr><td><b>Dojrzałość technologiczna</b> (TRL 1–9)</td><td>wprost z karty</td><td>15%</td></tr>
+    <tr><td><b>Innowacyjność</b></td><td>model, z podobnymi rozwiązaniami i publikacjami; analityk może poprawić</td><td>30%</td></tr>
+    <tr><td><b>Potencjał zastosowania</b></td><td>model; analityk może poprawić</td><td>30%</td></tr>
+    <tr><td><b>Wiarygodność</b> (osobny wskaźnik)</td><td>program: cytaty, rodzaj źródła, dokumentacja, liczba źródeł</td><td>0–100</td></tr>
+  </table>
+  <p class="lead" style="font-size: 28px">Rekomendację wybierają jawne reguły: wymaga potwierdzenia · licencja (polskie IP) · gotowe do zastosowania · pilotaż · rozwój.</p>
+</section>
+
+<section class="s">
+  <div class="row" style="height: 100%">
+    <div style="flex: 0 0 600px">
+      <div class="eyebrow">Dla odbiorców</div>
+      <h2>Szukasz po potrzebie, nie po słowach kluczowych.</h2>
+      <p class="lead" style="font-size: 30px">„Jak skrócić kolejki w urzędzie”: wyszukiwanie po znaczeniu, filtry dla inwestorów, samorządów, uczelni, szkół, startupów i wynalazców, porównanie kart obok siebie.</p>
+    </div>
+    <div style="flex: 1; display: grid; gap: 24px">
+      <img class="shot" style="height: 430px" src="img/search.png">
+      <img class="shot" style="height: 400px" src="img/compare.png">
+    </div>
+  </div>
+</section>
+
+<section class="s dark">
+  <div class="eyebrow">Działa na prawdziwych danych</div>
+  <h2>{{N_INNOWACJI}} innowacji z {{N_INSTYTUCJI}} instytucji,<br>{{N_DOKUMENTOW}} przeczytanych stron.</h2>
+  <div class="grid" style="grid-template-columns: repeat(4, 1fr)">
+    <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12)"><div class="big">{{N_ZRODEL}}</div><p style="color: rgba(255,255,255,.7)">źródeł: uczelnie, samorządy, szkoły z Podkarpacia i Wrocławia</p></div>
+    <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12)"><div class="big">{{N_KANDYDACI}}</div><p style="color: rgba(255,255,255,.7)">niepewnych trafień czeka na decyzję analityka</p></div>
+    <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12)"><div class="big">{{N_ODRZUCONE}}</div><p style="color: rgba(255,255,255,.7)">stron odsianych jako „to nie innowacja”</p></div>
+    <div class="card" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12)"><div class="big">{{SR_WIARYGODNOSC}}</div><p style="color: rgba(255,255,255,.7)">średnia wiarygodność (0–100)</p></div>
+  </div>
+  <p class="lead">Przykłady: recyklobeton z butelek PET (PWr), antybakteryjna powłoka na ekrany (UR i PCI), akustyczne wykrywanie dronów (PRz), Rzeszowski Panel Klimatyczny.</p>
+</section>
+
+<section class="s">
+  <div class="eyebrow">Wdrożenie i skalowanie</div>
+  <h2>Gotowe do uruchomienia w PCI jutro.</h2>
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="card"><h3>Nowe źródło = 1 wpis</h3><p>Adres listy aktualności i wzorzec adresu artykułu. Cała Polska bez zmian w kodzie.</p></div>
+    <div class="card"><h3>Koszt: grosze</h3><p>Ok. 0,1 USD za pełną analizę innowacji, ułamek centa za przesianie strony.</p></div>
+    <div class="card"><h3>Bezpieczeństwo</h3><p>Tylko dane opublikowane przez instytucje, anonimowa analityka, możliwy model lokalny (API zgodne z OpenAI).</p></div>
+    <div class="card"><h3>Cykliczność</h3><p>Endpoint dla harmonogramu: crawl, wykrywanie, ponowne sprawdzanie zmian.</p></div>
+    <div class="card"><h3>Integracje</h3><p>Publiczne API JSON z kartami i filtrami (<b>/api/innowacje</b>), analiza linku przez API, PostgreSQL + pgvector, Docker.</p></div>
+    <div class="card"><h3>Open source</h3><p>EUPL-1.2, gotowe do repozytorium Ministerstwa Cyfryzacji.</p></div>
+  </div>
+</section>
+
+<section class="s">
+  <div class="eyebrow">Co dalej</div>
+  <h2>Kolejne źródła i mierniki sukcesu.</h2>
+  <div class="grid" style="grid-template-columns: 1fr 1fr">
+    <div class="card"><h3>Rozwój</h3><p>Adaptery API: CORDIS, NCBR, PARP, UPRP i EPO; dokumenty PDF; konta analityków PCI; powiadomienia o nowych innowacjach w obszarze zainteresowań.</p></div>
+    <div class="card"><h3>Mierniki</h3><p>Czas od publikacji do karty, liczba scalonych duplikatów, zapytania bez wyników (luki), odsłony kart, liczba rozwiązań przeniesionych do innych instytucji.</p></div>
+  </div>
+</section>
+
+<section class="s dark" style="justify-content: center">
+  <svg class="spark" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#3A2F2B"/><path d="M16 4 L18.6 13.4 L28 16 L18.6 18.6 L16 28 L13.4 18.6 L4 16 L13.4 13.4 Z" fill="#E4572E"/><circle cx="16" cy="16" r="2.6" fill="#F2A541"/></svg>
+  <h1 style="margin-top: 48px">Dobre pomysły nie powinny gasnąć tam, gdzie powstały.</h1>
+  <p class="lead">ISKRA · {{DEMO_URL}} · github.com/qamarq/iskra</p>
+</section>
+
+</body>
+</html>
