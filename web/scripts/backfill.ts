@@ -1,12 +1,14 @@
 import { config } from "dotenv"
 config({ path: ".env.local" })
 
-import { eq, isNull } from "drizzle-orm"
+import { and, eq, isNull } from "drizzle-orm"
+import { SIMILAR_THRESHOLD } from "@/lib/domain"
 import { embed } from "@/server/ai/client"
 import { db } from "@/server/db"
-import { innovation, partner } from "@/server/db/schema"
+import { innovation, partner, priorArt } from "@/server/db/schema"
 import { cardEmbeddingText } from "@/server/pipeline/extract"
 import { analyzeInnovation } from "@/server/pipeline/ingest"
+import { findSimilarInnovations } from "@/server/pipeline/similar"
 
 async function main() {
   const partners = await db().select().from(partner).where(isNull(partner.embedding))
@@ -24,6 +26,21 @@ async function main() {
     if (vectors) await db().update(innovation).set({ embedding: vectors[0] }).where(eq(innovation.id, row.id))
   }
   console.log("innovations embedded:", innovations.length)
+
+  if (process.argv.includes("--similar")) {
+    const all = await db().select({ id: innovation.id, title: innovation.title, embedding: innovation.embedding }).from(innovation)
+    for (const row of all) {
+      if (!row.embedding) continue
+      const similar = await findSimilarInnovations(row.embedding, { excludeId: row.id, limit: 5, minSimilarity: SIMILAR_THRESHOLD })
+      await db().delete(priorArt).where(and(eq(priorArt.innovationId, row.id), eq(priorArt.source, "iskra")))
+      if (similar.length) {
+        await db()
+          .insert(priorArt)
+          .values(similar.map((s) => ({ innovationId: row.id, source: "iskra" as const, externalId: String(s.id), title: s.title, url: "/innowacje/" + s.slug, snippet: s.institution, similarity: s.similarity })))
+      }
+      if (similar.length) console.log(`similar: ${row.title} → ${similar.map((s) => s.title.slice(0, 40) + " " + s.similarity.toFixed(2)).join(" | ")}`)
+    }
+  }
 
   if (process.argv.includes("--reanalyze")) {
     const all = await db().select({ id: innovation.id, title: innovation.title }).from(innovation)

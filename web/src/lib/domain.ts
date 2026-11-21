@@ -23,7 +23,7 @@ export const PRIOR_ART_SOURCES = ["iskra", "openalex", "cordis", "uprp", "epo", 
 export type PriorArtSource = (typeof PRIOR_ART_SOURCES)[number]
 
 export const DUPLICATE_THRESHOLD = 0.9
-export const SIMILAR_THRESHOLD = 0.75
+export const SIMILAR_THRESHOLD = 0.62
 export const DETECTION_THRESHOLD = 0.5
 export const AUTO_PROMOTE_THRESHOLD = 0.75
 

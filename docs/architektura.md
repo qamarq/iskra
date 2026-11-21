@@ -13,7 +13,7 @@ Radar polskich innowacji dla zadania PCI „Radar innowacji” (HackNation 2026)
               └─ < 0,5: odrzucony
         └─► extract (structured output) ─► verify (cytaty szukane w tekście źródła: potwierdzone / szacunek / brak)
               └─► embed ─► podobne (pgvector)
-                    ├─ ≥ 0,90: dokument dołączony do istniejącej innowacji (nowe źródło)
+                    ├─ ≥ 0,90: dokument dołączony do istniejącej innowacji (nowe źródło); ≥ 0,62: podobne rozwiązanie
                     └─ nowa innowacja
                           └─► analyze: publikacje (OpenAlex), ocena modelu (innowacyjność, potencjał),
                               kryteria z karty (poziom wdrożenia, TRL), potencjał, wiarygodność, rekomendacja,
