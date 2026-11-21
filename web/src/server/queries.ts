@@ -68,7 +68,9 @@ export async function searchInnovations(filters: SearchFilters = {}, { log = fal
         .where(and(...conditions, isNotNull(innovation.embedding)))
         .orderBy(distance)
         .limit(limit)
-      rows = semantic.map((r) => ({ ...r, match: Number(r.match) })).filter((r) => r.match >= 0.2)
+      const scored = semantic.map((r) => ({ ...r, match: Number(r.match) }))
+      const best = scored[0]?.match ?? 0
+      rows = scored.filter((r) => r.match >= Math.max(0.3, best - 0.15))
       mode = "semantic"
     } catch {
       const like = `%${filters.q}%`

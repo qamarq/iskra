@@ -41,7 +41,10 @@ async function Compare({ raw }: { raw: string | string[] | undefined }) {
     { label: "Problem", render: (i) => <Fact value={i.card.problem.value} status={i.card.verification.problem} /> },
     { label: "Rozwiązanie", render: (i) => <Fact value={i.card.solution.value} status={i.card.verification.solution} /> },
     { label: "Status wdrożenia", render: (i) => <Fact value={STAGE_LABEL[i.level]} status={i.card.verification.implementation} /> },
-    { label: "TRL", render: (i) => (i.trl ? <Fact value={"TRL " + i.trl} status={i.card.verification.trl} /> : "nie dotyczy") },
+    {
+      label: "TRL",
+      render: (i) => (i.area !== "technologiczna" ? "nie dotyczy" : <Fact value={i.trl ? "TRL " + i.trl : null} status={i.card.verification.trl} />),
+    },
     { label: "Efekty", render: (i) => <Fact value={i.card.results.value} status={i.card.verification.results} /> },
     { label: "Własność intelektualna", render: (i) => <Fact value={i.card.ip.value} status={i.card.verification.ip} /> },
     { label: "Dla kogo", render: (i) => i.card.targetGroups.map((g) => TARGET_GROUP_SHORT[g]).join(", ") || "–" },
