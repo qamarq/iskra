@@ -35,14 +35,14 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
 
   return (
     <article className="space-y-8">
-      <header className="grid gap-6 rounded-3xl border border-border bg-card p-6 md:grid-cols-[1fr_auto] md:p-8">
+      <header className="grid gap-6 rounded-3xl border border-border bg-card p-5 md:grid-cols-[minmax(0,1fr)_auto] md:p-8">
         <div className="min-w-0 space-y-3">
           <p className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{data.institution?.name ?? card.institution.name}</span>
             {data.institution ? " · " + INSTITUTION_TYPE_LABEL[data.institution.type] : null}
             {card.institution.location ? " · " + card.institution.location : null}
           </p>
-          <h1 className="font-heading text-3xl leading-tight font-semibold tracking-tight md:text-4xl">{data.title}</h1>
+          <h1 className="font-heading text-[26px] leading-tight font-semibold tracking-tight break-words hyphens-auto sm:text-3xl md:text-4xl">{data.title}</h1>
           <p className="max-w-3xl text-base text-muted-foreground">{data.summary}</p>
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <Pill strong>{AREA_LABEL[data.area]}</Pill>
@@ -57,7 +57,7 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
             <CompareToggle slug={data.slug} />
           </div>
         </div>
-        <div className="flex gap-4 md:flex-col">
+        <div className="flex flex-wrap gap-3 md:flex-col md:flex-nowrap">
           <Gauge label="Potencjał" score={data.potential} hint="poziom wdrożenia, TRL, innowacyjność, zastosowanie" />
           <Gauge label="Wiarygodność" score={data.credibility} hint={credibilityLabel(data.credibility)} />
         </div>
@@ -312,7 +312,7 @@ export function InnovationView({ data }: { data: InnovationDetail }) {
 
 function Gauge({ label, score, hint }: { label: string; score: number | null; hint: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-muted/60 p-3 md:w-56">
+    <div className="flex min-w-[150px] flex-1 items-center gap-3 rounded-2xl bg-muted/60 p-3 md:w-56 md:flex-none">
       <ScoreRing score={score} size={64} />
       <div className="text-sm">
         <p className="font-medium">{label}</p>
