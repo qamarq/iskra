@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Iskierka } from "./iskierka/iskierka"
 import { cn } from "@/lib/utils"
 
 const STEPS = [
@@ -54,8 +55,13 @@ export function AnalyzeForm() {
   if (pending) {
     return (
       <div className="rounded-3xl border border-border bg-card p-8">
-        <p className="font-heading text-xl font-semibold">Analizuję źródło…</p>
-        <p className="mt-1 text-sm text-muted-foreground">Zwykle 20–40 sekund.</p>
+        <div className="flex items-center gap-5">
+          <Iskierka color="mint" pose={step >= STEPS.length - 1 ? "think" : "lupa"} size={96} />
+          <div>
+            <p className="font-heading text-xl font-semibold">Iskierka czyta źródło…</p>
+            <p className="mt-1 text-sm text-muted-foreground">Zwykle 20–40 sekund. {STEPS[step]}.</p>
+          </div>
+        </div>
         <ol className="mt-6 space-y-3">
           {STEPS.map((label, i) => (
             <li key={label} className="flex items-center gap-3 text-sm">
@@ -76,7 +82,7 @@ export function AnalyzeForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 rounded-3xl border border-border bg-card p-6 md:p-8">
+    <form onSubmit={onSubmit} data-guide="analyze" className="space-y-5 rounded-3xl border border-border bg-card p-6 md:p-8">
       <label className="block space-y-2">
         <span className="text-sm font-medium">Adres strony opisującej rozwiązanie</span>
         <input
@@ -89,9 +95,12 @@ export function AnalyzeForm() {
         />
       </label>
       {rejected ? (
-        <div className="rounded-xl bg-[#FFF6DF] px-4 py-3 text-sm text-[#5E4003]">
-          <p className="font-medium">To źródło nie opisuje innowacji według definicji Oslo Manual.</p>
-          <p className="mt-1">{rejected}</p>
+        <div className="flex items-start gap-3 rounded-xl bg-[#FFF6DF] px-4 py-3 text-sm text-[#5E4003]">
+          <Iskierka color="glow" pose="confused" size={64} />
+          <div>
+            <p className="font-medium">Hmm, to źródło nie opisuje innowacji według definicji Oslo Manual.</p>
+            <p className="mt-1">{rejected}</p>
+          </div>
         </div>
       ) : null}
       {error ? <p className="rounded-xl bg-[#F6E3E4] px-4 py-3 text-sm text-[#8F1D24]">{error}</p> : null}

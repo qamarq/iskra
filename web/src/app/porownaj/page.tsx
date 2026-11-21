@@ -53,7 +53,7 @@ async function Compare({ raw }: { raw: string | string[] | undefined }) {
   ]
 
   return (
-    <div className="overflow-x-auto rounded-3xl border border-border bg-card">
+    <div data-guide="compare" className="overflow-x-auto rounded-3xl border border-border bg-card">
       <table className="w-full min-w-[720px] text-sm">
         <thead>
           <tr className="border-b border-border align-top">

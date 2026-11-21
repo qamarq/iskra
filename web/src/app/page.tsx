@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
 import { ListSkeleton } from "@/components/list-skeleton"
 import { SearchBox } from "@/components/search-box"
-import { SparkMark } from "@/components/spark-mark"
+import { HeroMascot } from "@/components/iskierka/hero-mascot"
 import { INNOVATION_AREAS, TARGET_GROUPS } from "@/lib/card"
 import { AREA_LABEL, TARGET_GROUP_LABEL } from "@/lib/labels"
 import { searchInnovations } from "@/server/queries"
@@ -34,8 +34,10 @@ export default function Home() {
             ISKRA odnajduje istniejące innowacje technologiczne, edukacyjne i administracyjne w polskich uczelniach, szkołach i samorządach, sprawdza ich
             rzeczywisty poziom rozwoju i pokazuje, gdzie mogą się przydać.
           </p>
-          <SearchBox large />
-          <div className="flex flex-wrap items-center gap-2 text-sm">
+          <div data-guide="search" className="rounded-2xl">
+            <SearchBox large />
+          </div>
+          <div data-guide="examples" className="flex flex-wrap items-center gap-2 rounded-2xl text-sm">
             <span className="text-muted-foreground">Na przykład:</span>
             {EXAMPLES.map((e) => (
               <Link key={e} href={"/innowacje?q=" + encodeURIComponent(e)} className="rounded-full border border-border bg-card px-3 py-1 hover:border-primary/50">
@@ -49,7 +51,9 @@ export default function Home() {
           <div className="absolute inset-0 rounded-full border border-dashed border-primary/30" />
           <div className="absolute inset-16 rounded-full border border-dashed border-primary/25" />
           <div className="absolute inset-32 rounded-full border border-dashed border-primary/20" />
-          <SparkMark className="absolute top-1/2 left-1/2 size-28 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute inset-0">
+            <HeroMascot />
+          </div>
           <span className="absolute top-[18%] left-[22%] size-3 rounded-full bg-primary" />
           <span className="absolute top-[30%] right-[14%] size-2.5 rounded-full bg-glow" />
           <span className="absolute bottom-[20%] left-[30%] size-2 rounded-full bg-chart-3" />
@@ -59,7 +63,7 @@ export default function Home() {
 
       <section className="mx-auto w-full max-w-6xl px-5 pb-12">
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="rounded-3xl border border-border bg-card p-6">
+          <div data-guide="groups" className="rounded-3xl border border-border bg-card p-6">
             <h2 className="font-heading text-lg font-semibold">Szukasz jako…</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {TARGET_GROUPS.map((g) => (
@@ -82,7 +86,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-5 pb-12">
+      <section data-guide="top" className="mx-auto w-full max-w-6xl rounded-3xl px-5 pb-12">
         <div className="mb-5 flex items-end justify-between gap-4">
           <h2 className="font-heading text-2xl font-semibold">Najwyżej ocenione</h2>
           <Link href="/innowacje" className="flex items-center gap-1 text-sm font-medium text-primary hover:underline">

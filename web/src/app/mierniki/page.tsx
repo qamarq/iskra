@@ -73,7 +73,7 @@ async function Stats() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <section className="rounded-3xl border border-border bg-card p-6">
+        <section data-guide="searches" className="rounded-3xl border border-border bg-card p-6">
           <h3 className="font-heading text-lg font-semibold">Najczęstsze wyszukiwania (30 dni)</h3>
           {s.topSearches.length ? (
             <ul className="mt-4 space-y-2 text-sm">

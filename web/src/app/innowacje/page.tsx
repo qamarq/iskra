@@ -5,6 +5,7 @@ import { Suspense } from "react"
 import { EmptyState } from "@/components/empty-state"
 import { InnovationListItemCard } from "@/components/innovation-list-item"
 import { ListSkeleton } from "@/components/list-skeleton"
+import { Iskierka } from "@/components/iskierka/iskierka"
 import { SearchBox } from "@/components/search-box"
 import { IMPLEMENTATION_LEVELS, INNOVATION_AREAS, TARGET_GROUPS, type ImplementationLevel, type InnovationArea, type TargetGroup } from "@/lib/card"
 import { RECOMMENDATIONS, type Recommendation } from "@/lib/domain"
@@ -57,7 +58,7 @@ async function Results({ params }: { params: Params }) {
         <p className="text-muted-foreground">Opisz problem własnymi słowami. Radar szuka po znaczeniu, nie tylko po słowach kluczowych.</p>
       </div>
       <SearchBox defaultValue={q} hidden={{ obszar: area, etap: level, dla: group, rek: recommendation, region }} />
-      <div className="space-y-2">
+      <div data-guide="filters" className="space-y-2 rounded-2xl">
         <Row label="Dla kogo">
           <Chip href={href({ dla: undefined })} active={!group}>
             Wszyscy
@@ -109,12 +110,20 @@ async function Results({ params }: { params: Params }) {
           ))}
         </Row>
       </div>
-      <p className="text-sm text-muted-foreground">
-        {rows.length} {rows.length === 1 ? "rozwiązanie" : "rozwiązań"}
-        {q ? (mode === "semantic" ? ", posortowane według dopasowania do opisu" : ", wyszukiwanie tekstowe") : ", posortowane według potencjału"}
-      </p>
       {rows.length ? (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="flex items-center gap-3">
+          <Iskierka color={q ? "mint" : "ember"} pose={q ? "ok" : "idle"} size={56} />
+          <p className="rounded-2xl rounded-bl-sm border border-border bg-card px-4 py-2 text-sm shadow-sm">
+            {q ? "Znalazłam " : "Mam "}
+            <b>
+              {rows.length} {rows.length === 1 ? "rozwiązanie" : rows.length < 5 ? "rozwiązania" : "rozwiązań"}
+            </b>
+            {q ? (mode === "semantic" ? ", ułożone według dopasowania do Twojego opisu." : " (wyszukiwanie tekstowe).") : ", ułożone według potencjału."}
+          </p>
+        </div>
+      ) : null}
+      {rows.length ? (
+        <div data-guide="results" className="grid gap-3 rounded-2xl md:grid-cols-2">
           {rows.map((item) => (
             <InnovationListItemCard key={item.id} item={item} />
           ))}

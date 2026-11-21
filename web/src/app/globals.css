@@ -106,3 +106,35 @@
   .no-print { display: none !important; }
   body { background: #fff; }
 }
+
+@layer components {
+  .isk-float { animation: isk-float 3.2s ease-in-out infinite; }
+  .isk-body { transform-box: fill-box; transform-origin: 50% 100%; }
+  .isk:hover .isk-body { animation: isk-jelly .7s cubic-bezier(.3, 1.6, .5, 1); }
+  .isk-jiggle { animation: isk-jelly .7s cubic-bezier(.3, 1.6, .5, 1); }
+  .isk-blink { transform-box: fill-box; transform-origin: 50% 50%; animation: isk-blink 4.6s infinite; }
+  .isk-wave { transform-box: fill-box; transform-origin: 50% 0%; animation: isk-wave 1.4s ease-in-out infinite; }
+  .isk-twinkle { transform-box: fill-box; transform-origin: 50% 50%; animation: isk-twinkle 2.4s ease-in-out infinite; }
+  .isk-core { animation: isk-core 2s ease-in-out infinite; }
+  .isk-work { animation: isk-work 1.6s ease-in-out infinite; }
+  .isk-dots circle { animation: isk-dot 1.2s ease-in-out infinite; }
+  .isk-dots circle:nth-child(2) { animation-delay: .2s; }
+  .isk-dots circle:nth-child(3) { animation-delay: .4s; }
+  .isk-shadow { transform-box: fill-box; transform-origin: 50% 50%; animation: isk-shadow 3.2s ease-in-out infinite; }
+  .isk-burst { margin-left: -8px; animation: isk-burst .8s cubic-bezier(.2, .8, .3, 1) forwards; }
+  .guide-bubble { animation: guide-in .35s cubic-bezier(.3, 1.5, .5, 1); transform-origin: 20% 100%; }
+  .guide-highlight { position: relative; z-index: 20; border-radius: 1.5rem; scroll-margin-top: 96px; animation: guide-pulse 1.6s ease-in-out infinite; }
+}
+
+@keyframes isk-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6%); } }
+@keyframes isk-shadow { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.82); opacity: .6; } }
+@keyframes isk-jelly { 0% { transform: scale(1, 1); } 25% { transform: scale(1.14, .86); } 45% { transform: scale(.9, 1.1); } 65% { transform: scale(1.05, .95); } 85% { transform: scale(.98, 1.02); } 100% { transform: scale(1, 1); } }
+@keyframes isk-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes isk-wave { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(22deg); } }
+@keyframes isk-twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.25) rotate(20deg); } }
+@keyframes isk-core { 0%, 100% { opacity: 1; } 50% { opacity: .65; } }
+@keyframes isk-work { 0%, 100% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-6px, -4px) rotate(-8deg); } 75% { transform: translate(5px, 3px) rotate(6deg); } }
+@keyframes isk-dot { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@keyframes isk-burst { 0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(.4); } 100% { opacity: 0; transform: rotate(var(--a)) translateY(-70px) scale(1.2); } }
+@keyframes guide-in { from { opacity: 0; transform: scale(.7) translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes guide-pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(228, 87, 46, .9), 0 0 0 10px rgba(242, 165, 65, .25); } 50% { box-shadow: 0 0 0 3px rgba(228, 87, 46, .9), 0 0 0 18px rgba(242, 165, 65, 0); } }
