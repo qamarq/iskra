@@ -94,7 +94,7 @@ async function seedSources(sources: SeedSource[]) {
 async function seedInnovations(items: SeedInnovation[]) {
   const [importSource] = await db()
     .insert(source)
-    .values({ kind: "www", name: "Import danych startowych" })
+    .values({ kind: "import", name: "Import danych startowych" })
     .returning({ id: source.id })
 
   const created: number[] = []
@@ -109,20 +109,19 @@ async function seedInnovations(items: SeedInnovation[]) {
         institutionId,
         publishedAt: item.publishedAt ? new Date(item.publishedAt) : null,
       })
-      const result = await promoteDocument(doc.id, { author: "import", note: "Dane startowe: " + item.url, analyze: false })
-      created.push(result.id)
-      console.log("card:", item.title)
+      const result = await promoteDocument(doc.id, { author: "import", note: "Dane startowe: " + item.url })
+      if (!result.merged) created.push(result.id)
+      console.log(result.merged ? "merged:" : "added:", item.title)
     } catch (error) {
       console.error("card failed:", item.title, error instanceof Error ? error.message : error)
     }
   }
 
-  for (const id of created) {
-    const [row] = await db().select({ score: innovation.score, title: innovation.title }).from(innovation).where(eq(innovation.id, id))
-    if (row?.score != null) continue
+  for (const id of created.slice(0, Math.max(0, created.length - 1))) {
+    const [row] = await db().select({ title: innovation.title }).from(innovation).where(eq(innovation.id, id))
     try {
       const result = await analyzeInnovation(id)
-      console.log(`analyzed: ${row?.title} → ${result.score}/100, ${result.pathway.primary}`)
+      console.log(`re-analyzed with full base: ${row?.title} → potencjał ${result.potential}, wiarygodność ${result.credibility}, ${result.recommendation.primary}`)
     } catch (error) {
       console.error("analysis failed:", row?.title, error instanceof Error ? error.message : error)
     }

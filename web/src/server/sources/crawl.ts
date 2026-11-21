@@ -2,7 +2,8 @@ import "server-only"
 import { asc, eq } from "drizzle-orm"
 import { db } from "@/server/db"
 import { document, source } from "@/server/db/schema"
-import { screenDocument, storeDocument } from "@/server/pipeline/ingest"
+import { AUTO_PROMOTE_THRESHOLD } from "@/lib/domain"
+import { promoteDocument, screenDocument, storeDocument } from "@/server/pipeline/ingest"
 import { USER_AGENT, fetchPage } from "./fetch-page"
 import { canFetch } from "./robots"
 
@@ -68,7 +69,12 @@ export async function crawlSource(
         results.push({ url, status: "pobrany", title: page.title })
       } else {
         const screened = await screenDocument(doc.id)
-        results.push({ url, status: screened.status, title: page.title, reason: screened.reason })
+        if (screened.status === "kandydat" && screened.score >= AUTO_PROMOTE_THRESHOLD) {
+          const promoted = await promoteDocument(doc.id, { author: "radar", note: "Wykryta automatycznie: " + (src.name ?? "") })
+          results.push({ url, status: promoted.merged ? "nowe źródło istniejącej" : "dodana", title: page.title, reason: screened.reason })
+        } else {
+          results.push({ url, status: screened.status, title: page.title, reason: screened.reason })
+        }
       }
     } catch (error) {
       results.push({ url, status: "błąd", reason: error instanceof Error ? error.message : String(error) })
@@ -90,6 +96,11 @@ export async function screenPending(limit = 100) {
   for (const doc of pending) {
     try {
       const screened = await screenDocument(doc.id)
+      if (screened.status === "kandydat" && screened.score >= AUTO_PROMOTE_THRESHOLD) {
+        const promoted = await promoteDocument(doc.id, { author: "radar", note: "Wykryta automatycznie" })
+        results.push({ url: String(doc.id), status: promoted.merged ? "nowe źródło istniejącej" : "dodana", title: doc.title, reason: screened.reason })
+        continue
+      }
       results.push({ url: String(doc.id), status: screened.status, title: doc.title, reason: screened.reason })
     } catch (error) {
       results.push({ url: String(doc.id), status: "błąd", title: doc.title, reason: error instanceof Error ? error.message : String(error) })
