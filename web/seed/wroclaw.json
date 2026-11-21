@@ -1,0 +1,67 @@
+{
+  "sources": [
+    {
+      "name": "Politechnika Wrocławska – aktualności (Wrocław)",
+      "url": "https://pwr.edu.pl/uczelnia/aktualnosci",
+      "institution": "Politechnika Wrocławska",
+      "institutionType": "uczelnia",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/uczelnia/aktualnosci/[^/?]+-\\d+\\.html$"
+    },
+    {
+      "name": "Uniwersytet Wrocławski – aktualności (Wrocław)",
+      "url": "https://uwr.edu.pl/aktualnosci/",
+      "institution": "Uniwersytet Wrocławski",
+      "institutionType": "uczelnia",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/(?:[a-z0-9]+-){4,}[a-z0-9]+/$"
+    },
+    {
+      "name": "Uniwersytet Medyczny we Wrocławiu – aktualności (Wrocław)",
+      "url": "https://www.umw.edu.pl/pl/aktualnosci",
+      "institution": "Uniwersytet Medyczny im. Piastów Śląskich we Wrocławiu",
+      "institutionType": "uczelnia",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/pl/aktualnosci/[a-z0-9-]+$"
+    },
+    {
+      "name": "Uniwersytet Przyrodniczy we Wrocławiu – aktualności (Wrocław)",
+      "url": "https://upwr.edu.pl/aktualnosci",
+      "institution": "Uniwersytet Przyrodniczy we Wrocławiu",
+      "institutionType": "uczelnia",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/aktualnosci/[^/]+-\\d+\\.html$"
+    },
+    {
+      "name": "Urząd Miejski Wrocławia – aktualności (Wrocław)",
+      "url": "https://www.wroclaw.pl/dla-mieszkanca/aktualnosci",
+      "institution": "Gmina Wrocław",
+      "institutionType": "gmina",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/(dla-mieszkanca|rozmawia|smartcity|zielony-wroclaw|srodowisko|inwestycje|biznes|komunikacja)/(?:[a-z0-9]+-){5,}[a-z0-9]+$"
+    },
+    {
+      "name": "Wrocław Smart City (Wrocław)",
+      "url": "https://www.wroclaw.pl/smartcity",
+      "institution": "Gmina Wrocław",
+      "institutionType": "gmina",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "^/(dla-mieszkanca|rozmawia|smartcity|zielony-wroclaw|srodowisko|inwestycje|biznes|komunikacja)/(?:[a-z0-9]+-){5,}[a-z0-9]+$"
+    },
+    {
+      "name": "Urząd Marszałkowski Województwa Dolnośląskiego – aktualności (Wrocław)",
+      "url": "https://umwd.dolnyslask.pl/aktualnosci/",
+      "institution": "Urząd Marszałkowski Województwa Dolnośląskiego",
+      "institutionType": "wojewodztwo",
+      "city": "Wrocław",
+      "region": "dolnoslaskie",
+      "articlePattern": "/artykul/[^/]+/$"
+    }
+  ]
+}
