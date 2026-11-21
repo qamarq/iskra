@@ -19,8 +19,6 @@ export default function ReviewPage() {
       </PageHeader>
       <Suspense fallback={<ListSkeleton />}>
         <Candidates />
-      </Suspense>
-      <Suspense fallback={null}>
         <PendingDocuments />
       </Suspense>
     </main>
@@ -33,7 +31,7 @@ async function PendingDocuments() {
   if (!total) return null
   const bySource = Map.groupBy(rows, (r) => r.sourceName ?? "Bez źródła")
   return (
-    <section className="mt-12">
+    <section className="mt-8">
       <h2 className="font-heading text-xl font-semibold">Pobrane, czekają na wykrywanie ({total})</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Crawler pobrał te strony, ale model jeszcze nie sprawdził, czy opisują innowacje. Po podłączeniu modelu: <code>pnpm crawl --screen-pending</code>.
@@ -69,6 +67,14 @@ async function Candidates() {
   await connection()
   const candidates = await listCandidates()
   if (!candidates.length) {
+    const { total } = await listPendingDocuments(1)
+    if (total) {
+      return (
+        <p className="rounded-2xl border border-border bg-card px-5 py-4 text-sm text-muted-foreground">
+          Brak niepewnych trafień. Poniżej {total} pobranych stron czeka na wykrywanie przez model.
+        </p>
+      )
+    }
     return <EmptyState title="Brak kandydatów">Radar nie ma niepewnych trafień do sprawdzenia.</EmptyState>
   }
   return (
