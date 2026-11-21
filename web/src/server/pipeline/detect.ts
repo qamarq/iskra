@@ -2,6 +2,7 @@ import "server-only"
 import { z } from "zod"
 import type { DetectionResult } from "@/lib/domain"
 import { structured } from "@/server/ai/client"
+import { openaiConfig } from "@/server/env"
 
 const detectionSchema = z.object({
   isInnovation: z.boolean(),
@@ -18,6 +19,8 @@ To NIE jest innowacja: ogłoszenie o przetargu, naborze lub wydarzeniu bez opisu
 Zwróć isInnovation, pewność 0–1 i jedno zdanie uzasadnienia.`
 
 export async function detectInnovation(text: string): Promise<DetectionResult> {
-  const result = await structured(detectionSchema, "detection", INSTRUCTIONS, text.slice(0, 12000))
+  const result = await structured(detectionSchema, "detection", INSTRUCTIONS, text.slice(0, 12000), {
+    model: openaiConfig().detectModel,
+  })
   return { ...result, score: Math.min(1, Math.max(0, result.score)) }
 }

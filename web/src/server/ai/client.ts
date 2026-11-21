@@ -1,6 +1,6 @@
 import "server-only"
 import OpenAI from "openai"
-import { zodTextFormat } from "openai/helpers/zod"
+import { zodResponseFormat } from "openai/helpers/zod"
 import type { z } from "zod"
 import { EMBEDDING_DIMENSIONS } from "@/server/db/schema"
 import { openaiConfig } from "@/server/env"
@@ -20,15 +20,19 @@ export async function structured<T extends z.ZodType>(
   name: string,
   instructions: string,
   input: string,
+  options: { model?: string } = {},
 ): Promise<z.infer<T>> {
-  const response = await openai().responses.parse({
-    model: openaiConfig().model,
-    instructions,
-    input,
-    text: { format: zodTextFormat(schema, name) },
+  const completion = await openai().chat.completions.parse({
+    model: options.model ?? openaiConfig().model,
+    messages: [
+      { role: "system", content: instructions },
+      { role: "user", content: input },
+    ],
+    response_format: zodResponseFormat(schema, name),
   })
-  if (!response.output_parsed) throw new Error(`Model returned no ${name}`)
-  return response.output_parsed as z.infer<T>
+  const parsed = completion.choices[0]?.message.parsed
+  if (!parsed) throw new Error(`Model returned no ${name}`)
+  return parsed as z.infer<T>
 }
 
 export async function embed(texts: string[]): Promise<number[][]> {
@@ -37,7 +41,7 @@ export async function embed(texts: string[]): Promise<number[][]> {
   const response = await openai().embeddings.create({
     model,
     input: texts,
-    ...(model.startsWith("text-embedding-3") ? { dimensions: EMBEDDING_DIMENSIONS } : {}),
+    ...(model.includes("text-embedding-3") ? { dimensions: EMBEDDING_DIMENSIONS } : {}),
   })
   return [...response.data].sort((a, b) => a.index - b.index).map((d) => d.embedding)
 }
