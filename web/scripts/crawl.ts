@@ -11,7 +11,7 @@ const args = process.argv.slice(2)
 const flag = (name: string) => args.find((a) => a.startsWith("--" + name + "="))?.split("=").slice(1).join("=")
 const limit = Number(flag("limit") ?? 15)
 const match = flag("match")?.toLowerCase()
-const hasModel = Boolean(process.env.OPENAI_API_KEY)
+const hasModel = Boolean(process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY)
 const screen = hasModel && !args.includes("--no-screen")
 
 function print(r: { status: string; title?: string | null; url?: string; reason?: string }) {
@@ -20,7 +20,7 @@ function print(r: { status: string; title?: string | null; url?: string; reason?
 
 async function main() {
   if (args.includes("--screen-pending")) {
-    if (!hasModel) throw new Error("OPENAI_API_KEY is not set")
+    if (!hasModel) throw new Error("Brak klucza API modelu (ANTHROPIC_API_KEY albo OPENAI_API_KEY)")
     for (const r of await screenPending(Number(flag("limit") ?? 100))) print(r)
     process.exit(0)
   }

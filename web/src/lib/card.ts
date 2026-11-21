@@ -70,6 +70,71 @@ export const innovationCardSchema = z.object({
 
 export type InnovationCardDraft = z.infer<typeof innovationCardSchema>
 
+const q = (what: string) => z.string().describe("Dosłowny fragment źródła potwierdzający " + what + "; pusty tekst, gdy to Twój wniosek albo źródło o tym nie mówi")
+
+export const extractionSchema = z.object({
+  title: z.string(),
+  summary: z.string().describe("Dwa zdania: co to jest i jaki problem rozwiązuje"),
+  institution_name: z.string(),
+  institution_type: z.enum(INSTITUTION_TYPES),
+  institution_location: z.string().describe("Miejscowość; pusty tekst, gdy brak"),
+  area: z.enum(INNOVATION_AREAS),
+  character: z.enum(INNOVATION_CHARACTERS),
+  domain: z.string(),
+  problem: z.string().describe("Pusty tekst, gdy brak"),
+  problem_quote: q("problem"),
+  solution: z.string().describe("Pusty tekst, gdy brak"),
+  solution_quote: q("rozwiązanie"),
+  users: z.string().describe("Kto korzysta; pusty tekst, gdy brak"),
+  users_quote: q("użytkowników"),
+  level: z.enum(IMPLEMENTATION_LEVELS),
+  level_since: z.string().describe("Od kiedy działa lub kiedy testowano; pusty tekst, gdy brak"),
+  level_quote: q("etap wdrożenia"),
+  trl: z.number().int().describe("TRL 1–9 tylko dla rozwiązań technologicznych; 0, gdy nie dotyczy lub nie da się określić"),
+  trl_quote: q("poziom gotowości"),
+  novelty_scope: z.enum([...NOVELTY_SCOPES, "nieznana"]),
+  novelty_description: z.string().describe("Czym różni się od dotychczasowych rozwiązań; pusty tekst, gdy brak"),
+  novelty_quote: q("nowość"),
+  results: z.string().describe("Zmierzone efekty; pusty tekst, gdy brak"),
+  results_quote: q("efekty"),
+  ip: z.string().describe("Patent, zgłoszenie, wzór użytkowy z numerem; pusty tekst, gdy brak"),
+  ip_quote: q("ochronę"),
+  evidence: z.array(z.object({ kind: z.enum(EVIDENCE_KINDS), description: z.string(), quote: z.string() })),
+  applications: z.array(z.object({ where: z.string(), why: z.string() })).describe("2–4 miejsca, gdzie jeszcze można zastosować rozwiązanie (Twoja ocena)"),
+  target_groups: z.array(z.enum(TARGET_GROUPS)),
+  creators: z.array(z.object({ role: z.string(), name: z.string().describe("Pusty tekst, gdy brak nazwiska") })),
+  keywords: z.array(z.string()),
+  missing: z.array(z.string()),
+})
+
+export type Extraction = z.infer<typeof extractionSchema>
+
+export function draftFromExtraction(e: Extraction): InnovationCardDraft {
+  const t = (s: string) => (s.trim() ? s.trim() : null)
+  return {
+    title: e.title,
+    summary: e.summary,
+    institution: { name: e.institution_name, type: e.institution_type, location: t(e.institution_location) },
+    area: e.area,
+    character: e.character,
+    domain: e.domain,
+    problem: { value: t(e.problem), quote: t(e.problem_quote) },
+    solution: { value: t(e.solution), quote: t(e.solution_quote) },
+    users: { value: t(e.users), quote: t(e.users_quote) },
+    implementation: { value: { level: e.level, since: t(e.level_since) }, quote: t(e.level_quote) },
+    trl: { value: e.trl > 0 ? e.trl : null, quote: t(e.trl_quote) },
+    novelty: { value: { scope: e.novelty_scope === "nieznana" ? null : e.novelty_scope, description: t(e.novelty_description) }, quote: t(e.novelty_quote) },
+    results: { value: t(e.results), quote: t(e.results_quote) },
+    ip: { value: t(e.ip), quote: t(e.ip_quote) },
+    evidence: e.evidence.map((x) => ({ kind: x.kind, description: x.description, quote: t(x.quote) })),
+    applications: e.applications,
+    targetGroups: e.target_groups,
+    creators: e.creators.map((c) => ({ role: c.role, name: t(c.name) })),
+    keywords: e.keywords,
+    missing: e.missing,
+  }
+}
+
 export const FACT_FIELDS = ["problem", "solution", "users", "implementation", "trl", "novelty", "results", "ip"] as const
 export type FactField = (typeof FACT_FIELDS)[number]
 export type FactStatus = "potwierdzone" | "szacunek" | "brak"

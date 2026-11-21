@@ -11,12 +11,12 @@ export type ModelCriterion = (typeof MODEL_CRITERIA)[number]
 const criterionSchema = z.object({
   score: z.number().int().describe("Ocena 1–5"),
   rationale: z.string().describe("Jedno lub dwa zdania uzasadnienia po polsku, odwołujące się do faktów z karty"),
-  evidence: z.string().nullable().describe("Fragment karty lub źródła, na którym opiera się ocena"),
+  evidence: z.string().describe("Fragment karty lub źródła, na którym opiera się ocena; pusty tekst, gdy brak"),
 })
 
 const evaluationSchema = z.object({ innowacyjnosc: criterionSchema, potencjal_zastosowania: criterionSchema })
 
-export type CriterionScore = z.infer<typeof criterionSchema>
+export type CriterionScore = { score: number; rationale: string; evidence: string | null }
 export type ModelEvaluation = Record<ModelCriterion, CriterionScore>
 
 export type ReferenceItem = { title: string; where: string | null; similarity?: number }
@@ -49,6 +49,6 @@ export async function evaluateCard(card: InnovationCard, similar: ReferenceItem[
     list(publications, "Nie sprawdzano albo brak."),
   ].join("\n")
   const raw = await structured(evaluationSchema, "evaluation", INSTRUCTIONS, input)
-  const clamp = (s: CriterionScore) => ({ ...s, score: Math.min(5, Math.max(1, Math.round(s.score))) })
+  const clamp = (s: z.infer<typeof criterionSchema>): CriterionScore => ({ ...s, evidence: s.evidence.trim() || null, score: Math.min(5, Math.max(1, Math.round(s.score))) })
   return { innowacyjnosc: clamp(raw.innowacyjnosc), potencjal_zastosowania: clamp(raw.potencjal_zastosowania) }
 }

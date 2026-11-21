@@ -72,7 +72,7 @@ async function seedPartners(partners: SeedPartner[]) {
           description: p.description,
           tags: p.tags,
           url: p.url ?? null,
-          embedding: vectors[j],
+          embedding: vectors?.[j] ?? null,
         })),
       )
   }

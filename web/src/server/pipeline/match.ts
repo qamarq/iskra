@@ -42,29 +42,32 @@ export function tagFit(tags: string[], card: InnovationCard): number {
   return Math.min(1, hits / Math.min(tags.length, 3))
 }
 
-export async function rankPartners(embedding: number[], card: InnovationCard, rec: RecommendationResult, limit = 5): Promise<PartnerCandidate[]> {
-  const distance = cosineDistance(partner.embedding, embedding)
-  const rows = await db()
-    .select({
-      id: partner.id,
-      name: partner.name,
-      kind: partner.kind,
-      description: partner.description,
-      tags: partner.tags,
-      similarity: sql<number>`1 - (${distance})`,
-    })
-    .from(partner)
-    .where(isNotNull(partner.embedding))
-    .orderBy(distance)
-    .limit(30)
+export async function rankPartners(embedding: number[] | null, card: InnovationCard, rec: RecommendationResult, limit = 5): Promise<PartnerCandidate[]> {
+  const columns = { id: partner.id, name: partner.name, kind: partner.kind, description: partner.description, tags: partner.tags }
+  let rows: { id: number; name: string; kind: PartnerKind; description: string; tags: string[]; similarity: number | null }[]
+  if (embedding) {
+    const distance = cosineDistance(partner.embedding, embedding)
+    const found = await db()
+      .select({ ...columns, similarity: sql<number>`1 - (${distance})` })
+      .from(partner)
+      .where(isNotNull(partner.embedding))
+      .orderBy(distance)
+      .limit(30)
+    rows = found.map((r) => ({ ...r, similarity: Number(r.similarity) }))
+  } else {
+    rows = (await db().select(columns).from(partner)).map((r) => ({ ...r, similarity: null }))
+  }
   return rows
     .map((r) => {
-      const similarity = Number(r.similarity)
       const kf = kindFit(r.kind, rec)
       const tf = tagFit(r.tags, card)
-      const score = WEIGHTS.similarity * similarity + WEIGHTS.kind * kf + WEIGHTS.tags * tf
-      return { ...r, similarity, kindFit: kf, tagFit: tf, score: Math.round(score * 100) / 100 }
+      const score =
+        r.similarity != null
+          ? WEIGHTS.similarity * r.similarity + WEIGHTS.kind * kf + WEIGHTS.tags * tf
+          : (WEIGHTS.kind * kf + WEIGHTS.tags * tf) / (WEIGHTS.kind + WEIGHTS.tags)
+      return { ...r, similarity: r.similarity ?? 0, kindFit: kf, tagFit: tf, score: Math.round(score * 100) / 100 }
     })
+    .filter((r) => r.kindFit > 0 || r.tagFit > 0 || r.similarity > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
 }
@@ -76,13 +79,13 @@ const explanationSchema = z.object({
 const INSTRUCTIONS = `Jesteś analitykiem radaru innowacji. Dla każdego podmiotu z listy napisz po polsku jedno konkretne zdanie: jak mógłby wykorzystać, wdrożyć, licencjonować lub rozwijać opisane rozwiązanie. Odwołuj się do profilu podmiotu. Nie pisz o finansowaniu ani inwestowaniu w twórców.`
 
 function fallbackReason(c: PartnerCandidate): string {
-  const parts = [`podobieństwo profilu ${Math.round(c.similarity * 100)}%`]
+  const parts = c.similarity ? [`podobieństwo profilu ${Math.round(c.similarity * 100)}%`] : []
   if (c.kindFit === 1) parts.push("typ podmiotu pasuje do rekomendacji")
   if (c.tagFit > 0) parts.push("wspólne obszary tematyczne")
   return `Dopasowanie: ${parts.join(", ")}.`
 }
 
-export async function matchPartners(innovationId: number, embedding: number[], card: InnovationCard, rec: RecommendationResult): Promise<number> {
+export async function matchPartners(innovationId: number, embedding: number[] | null, card: InnovationCard, rec: RecommendationResult): Promise<number> {
   const candidates = await rankPartners(embedding, card, rec)
   if (candidates.length === 0) return 0
   let reasons = new Map<number, string>()

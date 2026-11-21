@@ -116,8 +116,8 @@ export async function promoteDocument(documentId: number, { author, note }: { au
   }
 
   const card = await extractCard(doc.text, doc.url)
-  const [embedding] = await embed([cardEmbeddingText(card)])
-  const similar = await findSimilarInnovations(embedding, { limit: 5, minSimilarity: SIMILAR_THRESHOLD })
+  const embedding = (await embed([cardEmbeddingText(card)]))?.[0] ?? null
+  const similar = embedding ? await findSimilarInnovations(embedding, { limit: 5, minSimilarity: SIMILAR_THRESHOLD }) : []
   const duplicate = similar.find((s) => s.similarity >= DUPLICATE_THRESHOLD)
 
   if (duplicate) {
@@ -192,12 +192,11 @@ export async function analyzeInnovation(innovationId: number, knownSimilar?: Sim
     .where(eq(innovation.id, innovationId))
   if (!row) throw new Error(`Innovation ${innovationId} not found`)
   const card = row.card
-  const embedding = row.embedding ?? (await embed([cardEmbeddingText(card)]))[0]
-  if (!row.embedding) await db().update(innovation).set({ embedding }).where(eq(innovation.id, innovationId))
+  const embedding = row.embedding ?? (await embed([cardEmbeddingText(card)]))?.[0] ?? null
+  if (!row.embedding && embedding) await db().update(innovation).set({ embedding }).where(eq(innovation.id, innovationId))
 
-  const similar = (knownSimilar ?? (await findSimilarInnovations(embedding, { excludeId: innovationId, limit: 5, minSimilarity: SIMILAR_THRESHOLD }))).filter(
-    (s) => s.id !== innovationId,
-  )
+  const found = knownSimilar ?? (embedding ? await findSimilarInnovations(embedding, { excludeId: innovationId, limit: 5, minSimilarity: SIMILAR_THRESHOLD }) : [])
+  const similar = found.filter((s) => s.id !== innovationId)
   const publications = await searchPublications(card).catch(() => [])
 
   await db().delete(priorArt).where(and(eq(priorArt.innovationId, innovationId), inArray(priorArt.source, ["iskra", "openalex"])))

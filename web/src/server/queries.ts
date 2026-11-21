@@ -58,7 +58,8 @@ export async function searchInnovations(filters: SearchFilters = {}, { log = fal
 
   if (filters.q) {
     try {
-      const [vector] = await embed([filters.q])
+      const vector = (await embed([filters.q]))?.[0]
+      if (!vector) throw new Error("embeddings disabled")
       const distance = cosineDistance(innovation.embedding, vector)
       const semantic = await db()
         .select({ ...listColumns, match: sql<number>`1 - (${distance})` })
