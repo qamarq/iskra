@@ -22,6 +22,10 @@ export type PartnerKind = (typeof PARTNER_KINDS)[number]
 export const PATHWAYS = ["transfer", "komercjalizacja", "prototypowanie", "finansowanie", "pilotaz", "uzupelnienie"] as const
 export type Pathway = (typeof PATHWAYS)[number]
 
+export const DUPLICATE_THRESHOLD = 0.88
+export const SIMILAR_THRESHOLD = 0.75
+export const DETECTION_THRESHOLD = 0.5
+
 export const CRITERIA = ["waga_problemu", "nowosc", "dojrzalosc", "efekty", "przenaszalnosc", "koszt"] as const
 export type Criterion = (typeof CRITERIA)[number]
 
