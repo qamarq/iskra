@@ -1,6 +1,6 @@
 import "server-only"
 
-const USER_AGENT = "ISKRA radar innowacji (prototyp HackNation 2026)"
+export const USER_AGENT = "ISKRA radar innowacji (prototyp HackNation 2026)"
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", oacute: "ó", Oacute: "Ó", ndash: "–", mdash: "—", bdquo: "„", rdquo: "”" }
 

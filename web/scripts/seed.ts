@@ -31,7 +31,15 @@ type SeedPartner = {
   url?: string | null
 }
 
-type SeedSource = { name: string; url: string; institution: string; institutionType: InstitutionType; city?: string | null }
+type SeedSource = {
+  name: string
+  url: string
+  institution: string
+  institutionType: InstitutionType
+  city?: string | null
+  region?: string | null
+  articlePattern?: string
+}
 
 type SeedFile = { innovations?: SeedInnovation[]; partners?: SeedPartner[]; sources?: SeedSource[] }
 
@@ -39,10 +47,10 @@ const args = process.argv.slice(2)
 const file = args.find((a) => !a.startsWith("--")) ?? "seed/seed.json"
 const withDemo = args.includes("--with-demo")
 
-async function upsertInstitution(name: string, type: InstitutionType, city?: string | null) {
+async function upsertInstitution(name: string, type: InstitutionType, city?: string | null, region = "podkarpackie") {
   const [row] = await db()
     .insert(institution)
-    .values({ name, type, city: city ?? null, region: "podkarpackie" })
+    .values({ name, type, city: city ?? null, region })
     .onConflictDoUpdate({ target: institution.name, set: { type } })
     .returning({ id: institution.id })
   return row.id
@@ -75,8 +83,10 @@ async function seedSources(sources: SeedSource[]) {
   for (const s of sources) {
     const [found] = await db().select({ id: source.id }).from(source).where(eq(source.url, s.url))
     if (found) continue
-    const institutionId = await upsertInstitution(s.institution, s.institutionType, s.city)
-    await db().insert(source).values({ kind: "www", name: s.name, url: s.url, institutionId })
+    const institutionId = await upsertInstitution(s.institution, s.institutionType, s.city, s.region ?? "podkarpackie")
+    await db()
+      .insert(source)
+      .values({ kind: "www", name: s.name, url: s.url, institutionId, config: s.articlePattern ? { articlePattern: s.articlePattern } : null })
   }
   console.log(`sources: ${sources.length} checked`)
 }
